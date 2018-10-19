@@ -1,7 +1,6 @@
 # CST-205
 <br>
-# Algorithms and Data Structures
-<br>
+## Algorithms and Data Structures
 <br>
 This Repository encompases all code projects for the above mentioned class at Grand Canyon University.  Branches are used to distinguish Weekly Assignments and text examples.
 <br>
