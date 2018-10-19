@@ -1,6 +1,8 @@
-# CST-205
+# Reimagined-Spoon
 
-## Algorithms and Data Structures
+#### CST-205
+
+#### Algorithms and Data Structures
 
 This Repository encompases all code projects for the above mentioned class at Grand Canyon University.  Branches are used to distinguish Weekly Assignments and text examples.
 <br>
