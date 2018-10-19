@@ -10,5 +10,3 @@ This Repository encompases all code projects for the above mentioned class at Gr
 <br>
 [Master](https://github.com/lljakll/reimagined-spoon/tree/master) - No Code.  License and this file.  See branches for assignments and projects.
 <br>
-
-
