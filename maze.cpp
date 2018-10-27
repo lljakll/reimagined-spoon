@@ -7,31 +7,44 @@ using namespace std;
 
 class Cell {
 public:
-	Cell();
-	Cell(int locationX, int locationY);
-	void visitCell();
-	void UpdateCellLoc(int x, y)
+	Cell(){
+		cellLocX, cellLocY = 0;
+		isAWall,isStart,isFinish,isBarrier,hasBeenVisited = false;
+	}
+	
+	Cell(int locationX, int locationY){
+		cellLocX = locationX;
+		cellLocY = locationY;
+		isAWall,isStart,isFinish,isBarrier,hasBeenVisited = false;
+	}
+//	void visitCell();
+	void UpdateCellLoc(int x, int y){
+		cellLocX = x;
+		cellLocY = y;
+	}
 protected:
 	int cellLocX, cellLocY;
 	bool isAWall, isStart, isFinish, isBarrier, hasBeenVisited;
-}
+};
+
 
 int main() {
 	// Create the array of objects, update their x,y loc
-	Cell[12][12] maze;
+	Cell maze[12][12];
 	
 	for (int row = 0; row < 12; row++){
 		for (int col = 0; col < 12; col++){
-			maze[row,col].UpdateCellLoc(row,col);
+			maze[row,col]->UpdateCellLoc(row,col);
 		}
 	}
 	
-	// Read from the fileb
+	// Read from the file
 	
 	// process the file and update the array of objects with
 	// the proper information from the file.
 	
-	
+	// Display the maze
+
 	
 	cin.get();
 	return 0;
