@@ -10,5 +10,5 @@ This Repository encompases all code projects for the above mentioned class at Gr
 ### TABLE OF CONTENTS
 
 [Master](https://github.com/lljakll/reimagined-spoon/tree/master) - No Code.  License and this file.  See branches for assignments and projects.
-
+[Maze-1](https://github.com/lljakll/reimagined-spoon/tree/Maze-1) - Week One Maze Project.
 <br>
