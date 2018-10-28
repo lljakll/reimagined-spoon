@@ -27,10 +27,11 @@ public:
 				else { content[i][j] = '.';	}
 			}
 		}
+		// Set flags based on passed cellType
 		if (cellType == 'S' || cellType == 's'){ content[1][1] = 'S'; isStart = true;}
 		else if(cellType == 'F' || cellType == 'f'){ content[1][1] = 'F'; isFinish = true;}
-
-		isAWall,isStart,isFinish,isBarrier,hasBeenVisited = false;
+		
+		isBarrier,hasBeenVisited = false;
 		cellLocX, cellLocY = 0;
 	}
 
@@ -42,14 +43,15 @@ public:
 				else { content[i][j] = '.';	}
 			}
 		}
+		// Set flags based on passed cellType
 		if (cellType == 'S' || cellType == 's'){ content[1][1] = 'S'; isStart = true;}
 		else if(cellType == 'F' || cellType == 'f'){ content[1][1] = 'F'; isFinish = true;}
 
-		isAWall,isStart,isFinish,isBarrier,hasBeenVisited = false;
+		isBarrier,hasBeenVisited = false;
 		cellLocX, cellLocY = 0;
 	}
 	bool UpdateCellHasBeenVisited(){
-		return true;
+		hasBeenVisited = true;
 	}
 	char ReturnCellValue(int row, int col){
 		return content[row][col];
@@ -65,10 +67,12 @@ protected:
 // Need to work on passing 2D array by ref
 // So we dont have to define the size of the array here
 void PrintArray(Cell ** array, int rowSize, int colSize){
+	// Add numerical header to displayed grid
 	for (int i = 0; i < colSize; i++){ cout << "  " << i << "   "; }
 	cout << endl;
 	for (int i = 0; i < rowSize; i++){
 		for (int m = 0; m < 3; m++){
+			// Add row count to first column
 			if (m ==1){ cout << i << " "; }
 			else { cout << "  "; }
 			for (int j = 0; j < colSize; j++){
