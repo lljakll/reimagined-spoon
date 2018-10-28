@@ -64,10 +64,14 @@ protected:
 // Print the array of Cell Objects to STD_OUT
 // Need to work on passing 2D array by ref
 // So we dont have to define the size of the array here
-void PrintArray(Cell array[9][9], int size){
-	for (int i = 0; i < size; i++){
+void PrintArray(Cell ** array, int rowSize, int colSize){
+	for (int i = 0; i < colSize; i++){ cout << "  " << i << "   "; }
+	cout << endl;
+	for (int i = 0; i < rowSize; i++){
 		for (int m = 0; m < 3; m++){
-			for (int j = 0; j < size; j++){
+			if (m ==1){ cout << i << " "; }
+			else { cout << "  "; }
+			for (int j = 0; j < colSize; j++){
 				for (int n = 0; n < 3; n++){
 					cout << array[i][j].ReturnCellValue(m,n) << " ";
 				}
@@ -79,10 +83,14 @@ void PrintArray(Cell array[9][9], int size){
 
 int main() {
 	// Create the array of objects
-	const int ARR_SZ = 9;
-	Cell maze[ARR_SZ][ARR_SZ];
+	int rowSize = 9;
+	int colSize = 9;
 
-	PrintArray(maze, ARR_SZ);
+	Cell** maze;
+	maze = new Cell*[colSize];
+	for (int i=0; i<colSize;i++){ maze[i] = new Cell[rowSize]; }
+
+	PrintArray(maze, rowSize, colSize);
 	cin.get();
 	return 0;
 }
