@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <algorithm>
+#include <vector>
 
 using namespace std;
 
@@ -88,51 +89,23 @@ void PrintArray(Cell ** array, int rowSize, int colSize){
 	}
 }
 
-int GetFileNumLines(){
-	// get number of lines from file for array size
-	ifstream size("inputFile");
-	int arraySize = count(istreambuf_iterator<char>(size),
-		istreambuf_iterator<char>(), '\n') + 1;
-	size.close();
+string ReadFile(){
+	ifstream myFile("inputFile", ios::in | ios::binary | ios::ate);
 
-	return arraySize;
-}
+	ifstream::pos_type fileSize = myFile.tellg();
+	myFile.seekg(0, ios::beg);
 
-string* ReadFile(){
+	vector<char> bytes(fileSize);
+	myFile.read(bytes.data(), fileSize);
 
-	int arraySize = 1;
-	int arrayIncrement = 0;
-	string line;
-
-	arraySize = GetFileNumLines();
-
-	// Create the array to hold each line from the file
-	string* input;
-	input = new string[arraySize];
-
-	// open and read the file to the array
-	ifstream myFile("inputFile");
-	if (myFile.is_open())
-	{
-		while(getline(myFile, line)) {
-			input[arrayIncrement] = line;
-			cout << input[arrayIncrement];
-			arrayIncrement++;
-		 }
-		 myFile.close();
-	}
-	else cout << "unable to open file";
-	// return the array by ref
-	return input;
+	return string(bytes.data(), fileSize);
 }
 
 int main() {
 	// Read from the file
-	string *fileInputData = ReadFile();
+	string fileInputData = ReadFile();
+	cout << fileInputData;
 
-	// Display file for test purposes
-	int arraySize = GetFileNumLines();
-	for(int i = 0; i < arraySize; i++) { cout << *(fileInputData+i) << endl;}
 
 
 	// Create the array of objects
