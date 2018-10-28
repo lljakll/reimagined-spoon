@@ -3,6 +3,10 @@
 #include <fstream>
 #include <cstring>
 #include <iostream>
+#include <string>
+#include <algorithm>
+#include <vector>
+
 using namespace std;
 
 class Cell {
@@ -27,10 +31,11 @@ public:
 				else { content[i][j] = '.';	}
 			}
 		}
+		// Set flags based on passed cellType
 		if (cellType == 'S' || cellType == 's'){ content[1][1] = 'S'; isStart = true;}
 		else if(cellType == 'F' || cellType == 'f'){ content[1][1] = 'F'; isFinish = true;}
-
-		isAWall,isStart,isFinish,isBarrier,hasBeenVisited = false;
+		
+		isBarrier,hasBeenVisited = false;
 		cellLocX, cellLocY = 0;
 	}
 
@@ -42,14 +47,15 @@ public:
 				else { content[i][j] = '.';	}
 			}
 		}
+		// Set flags based on passed cellType
 		if (cellType == 'S' || cellType == 's'){ content[1][1] = 'S'; isStart = true;}
 		else if(cellType == 'F' || cellType == 'f'){ content[1][1] = 'F'; isFinish = true;}
 
-		isAWall,isStart,isFinish,isBarrier,hasBeenVisited = false;
+		isBarrier,hasBeenVisited = false;
 		cellLocX, cellLocY = 0;
 	}
 	bool UpdateCellHasBeenVisited(){
-		return true;
+		hasBeenVisited = true;
 	}
 	char ReturnCellValue(int row, int col){
 		return content[row][col];
@@ -65,10 +71,12 @@ protected:
 // Need to work on passing 2D array by ref
 // So we dont have to define the size of the array here
 void PrintArray(Cell ** array, int rowSize, int colSize){
+	// Add numerical header to displayed grid
 	for (int i = 0; i < colSize; i++){ cout << "  " << i << "   "; }
 	cout << endl;
 	for (int i = 0; i < rowSize; i++){
 		for (int m = 0; m < 3; m++){
+			// Add row count to first column
 			if (m ==1){ cout << i << " "; }
 			else { cout << "  "; }
 			for (int j = 0; j < colSize; j++){
@@ -81,7 +89,25 @@ void PrintArray(Cell ** array, int rowSize, int colSize){
 	}
 }
 
+string ReadFile(){
+	ifstream myFile("inputFile", ios::in | ios::binary | ios::ate);
+
+	ifstream::pos_type fileSize = myFile.tellg();
+	myFile.seekg(0, ios::beg);
+
+	vector<char> bytes(fileSize);
+	myFile.read(bytes.data(), fileSize);
+
+	return string(bytes.data(), fileSize);
+}
+
 int main() {
+	// Read from the file
+	string fileInputData = ReadFile();
+	cout << fileInputData;
+
+
+
 	// Create the array of objects
 	int rowSize = 9;
 	int colSize = 9;
@@ -90,18 +116,11 @@ int main() {
 	maze = new Cell*[colSize];
 	for (int i=0; i<colSize;i++){ maze[i] = new Cell[rowSize]; }
 
-	PrintArray(maze, rowSize, colSize);
+//	PrintArray(maze, rowSize, colSize);
 	cin.get();
 	return 0;
 }
 
-
-	// Read from the file
-	
-	// process the file and update the array of objects with
+// process the file and update the array of objects with
 	// the proper information from the file.
 	
-	// Display the maze
-
-	
-
