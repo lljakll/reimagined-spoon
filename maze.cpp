@@ -3,6 +3,9 @@
 #include <fstream>
 #include <cstring>
 #include <iostream>
+#include <string>
+#include <algorithm>
+
 using namespace std;
 
 class Cell {
@@ -85,7 +88,53 @@ void PrintArray(Cell ** array, int rowSize, int colSize){
 	}
 }
 
+int GetFileNumLines(){
+	// get number of lines from file for array size
+	ifstream size("inputFile");
+	int arraySize = count(istreambuf_iterator<char>(size),
+		istreambuf_iterator<char>(), '\n') + 1;
+	size.close();
+
+	return arraySize;
+}
+
+string* ReadFile(){
+
+	int arraySize = 1;
+	int arrayIncrement = 0;
+	string line;
+
+	arraySize = GetFileNumLines();
+
+	// Create the array to hold each line from the file
+	string* input;
+	input = new string[arraySize];
+
+	// open and read the file to the array
+	ifstream myFile("inputFile");
+	if (myFile.is_open())
+	{
+		while(getline(myFile, line)) {
+			input[arrayIncrement] = line;
+			cout << input[arrayIncrement];
+			arrayIncrement++;
+		 }
+		 myFile.close();
+	}
+	else cout << "unable to open file";
+	// return the array by ref
+	return input;
+}
+
 int main() {
+	// Read from the file
+	string *fileInputData = ReadFile();
+
+	// Display file for test purposes
+	int arraySize = GetFileNumLines();
+	for(int i = 0; i < arraySize; i++) { cout << *(fileInputData+i) << endl;}
+
+
 	// Create the array of objects
 	int rowSize = 9;
 	int colSize = 9;
@@ -94,18 +143,11 @@ int main() {
 	maze = new Cell*[colSize];
 	for (int i=0; i<colSize;i++){ maze[i] = new Cell[rowSize]; }
 
-	PrintArray(maze, rowSize, colSize);
+//	PrintArray(maze, rowSize, colSize);
 	cin.get();
 	return 0;
 }
 
-
-	// Read from the file
-	
-	// process the file and update the array of objects with
+// process the file and update the array of objects with
 	// the proper information from the file.
 	
-	// Display the maze
-
-	
-
