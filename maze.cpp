@@ -37,6 +37,7 @@ public:
 		cellLocX, cellLocY = 0;
 	}
 
+	// Update the celltype after creation(same as overloaded constructor)
 	void UpdateCellType(char cellType) {
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
@@ -52,9 +53,11 @@ public:
 		isBarrier, hasBeenVisited = false;
 		cellLocX, cellLocY = 0;
 	}
+	// future functionality
 	bool UpdateCellHasBeenVisited() {
 		hasBeenVisited = true;
 	}
+	// used in printing and writing to file/ future will put those functions in here
 	char ReturnCellValue(int row, int col) {
 		return content[row][col];
 	}
@@ -80,6 +83,7 @@ void PrintArray(Cell ** array, int rowSize, int colSize) {
 		}
 	}
 	cout << endl;
+	// iterating through the array
 	for (int i = 0; i < rowSize; i++) {
 		for (int m = 0; m < 3; m++) {
 			// Add row count to first column
@@ -115,6 +119,7 @@ void WriteArray(Cell ** array, int rowSize, int colSize) {
 		}
 	}
 	outFile << endl;
+	// iterating through the array
 	for (int i = 0; i < rowSize; i++) {
 		for (int m = 0; m < 3; m++) {
 			// Add row count to first column
@@ -134,23 +139,10 @@ void WriteArray(Cell ** array, int rowSize, int colSize) {
 	outFile.close();
 }
 
-// stream entire file to a string.  Maybe use this later.  will have to 
-// parse the string to get input for the array
-/*string ReadFile(){
-	ifstream myFile("inputFile", ios::in | ios::binary | ios::ate);
-
-	ifstream::pos_type fileSize = myFile.tellg();
-	myFile.seekg(0, ios::beg);
-
-	vector<char> bytes(fileSize);
-	myFile.read(bytes.data(), fileSize);
-
-	return string(bytes.data(), fileSize);
-}*/
-
 int main() {
 
 // Dirty read/parse file (must be all ints)
+// want to move to function and parse no matter the content
 	int rowSize, colSize;
 	int startRow, startCol;
 	int finishRow, finishCol;
@@ -162,6 +154,17 @@ int main() {
 	myFile >> colSize >> rowSize;
 	myFile >> startCol >> startRow >> finishCol >> finishRow;
 
+	// error check the file input
+	if(colSize < 0 || rowSize < 0 ||  startCol < 0 || 
+		startCol > colSize ||  startRow < 0 || startRow > rowSize || 
+		finishCol < 0 || finishCol > colSize||  finishRow < 0 || finishRow > rowSize ){
+		cout << "There was an error!  Check file contents." 
+			<< "One of the input numbers is out of range." 
+			<< endl << "File input checked: Size, Start, and Finish Coordinates." 
+			<< endl;
+		return 1;
+	}
+
 	// Create the array of objects
 	Cell** maze;
 	maze = new Cell*[rowSize];
@@ -170,6 +173,15 @@ int main() {
 	// UpdateCells to walls based on inputFile data
 	for (int h = 0; h < 79; h++) {
 		myFile >> wallCol >> wallRow;
+
+		// error check the file input
+		if (wallCol < 0 || wallCol > colSize || wallRow < 0 || wallRow > rowSize){
+			cout << "There was an error!  Check file contents." 
+				<< "One of the input numbers is out of range." 
+				<< endl << "File input checked: Wall Cordinates." 
+				<< endl;
+			return 1;
+		}
 		maze[wallRow][wallCol].UpdateCellType('X');
 	}
 	

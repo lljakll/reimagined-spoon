@@ -13,3 +13,7 @@ This Repository encompases all code projects for the above mentioned class at Gr
 <br>
 [Maze-1](https://github.com/lljakll/reimagined-spoon/tree/Maze-1) - Week One Maze Project.
 <br>
+<br>
+<br>
+## Use Instructions ##
+maze.cpp will compile in VS2017 or g++.  Ensure 'inputFile' and 'outputFile' are in the same folder/directory as the binary/executable file.  Run the executable by double clicking on it or the linux binary by ./<compiledFilename> in a shell.
