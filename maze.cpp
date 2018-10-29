@@ -187,7 +187,8 @@ int main() {
 	WriteArray(maze, rowSize, colSize);
 
 	// Press a key
-	cout << endl;
-	system("pause");
+	cout << endl << "Press <Enter> to continue..." << endl;
+	cin.get();
+	
 	return 0;
 }
