@@ -25,13 +25,27 @@ public:
 
 };
 
-class LinkedList{
+class SLinkedList{
 public:
-    LinkedList(){
+    SLinkedList(){
         head = 0;
         tail = 0;
     }
+    // overload operator=
+    SLinkedList& operator=(SLinkedList &list){
 
+        while(head !=NULL)
+            deleteAllNodes();
+
+        SLinkedList *current;
+        current->head=list->head;
+        while(current != NULL){
+            addNodeToHead(current->data);
+            current=current->next;
+        }
+        head=current;
+        return *this;
+    }
     // Page 79
     void addNodeToHead(string passedData){
 
@@ -88,6 +102,11 @@ public:
             temp->next = new Node(passedData, temp->next);
         }
     }
+    void deleteAllNodes(){
+        Node *temp = head->next;
+        delete head;
+        head = temp;
+    }
 
     void deleteIthNode(int ithNode){
         Node *temp, *prev;
@@ -127,20 +146,49 @@ public:
             }
         }
     }
-//    void printNode()
+
+    void reverseList(){
+        // check to see if list has any nodes.
+        if(head != 0){
+            // declare and initialize 3 pointers 
+            Node *curr = head;
+            Node *prev = NULL, *next = NULL;
+
+            // assign tail to head( using curr for consistency)
+            tail = curr;
+            // curr is not at the end of the list
+            while(curr != NULL){
+                // move next ptr to next node
+                next = curr->next;
+
+                // move curr-next ptr to previous addy
+                curr->next = prev;
+
+                // move prev ptr to curr addy/then curr ptr to next addy
+                prev = curr;
+                curr = next;
+            }
+            // assign previous (last in original list) as head.
+            head = prev;
+        }
+    }
+
+    void destructivelyAppendList(){
+
+    }
+
+
 //    bool listContains(string searchStr)
 //    Node searchList(string searchStr)
-//    void sortList()
-//    void copyList()
-//    void destructivelyAppendList()
-//    void reverseList()
+//    void sortListAscending()
 
 private:
     Node *head, *tail;
 };
 
 int main(){
-    LinkedList myList;
+    SLinkedList myList;
+    SLinkedList yourList;
 
     char choice;
     string value;
@@ -149,14 +197,19 @@ int main(){
     do{
         if (system("clear")) system("CLS");
 
-        cout << "THE LIST:" << endl;
+        cout << "LIST 1:" << endl;
         myList.printAllNodes();
         cout << endl << endl;
-        cout << "**MENU**" << endl;
+        cout << "LIST 2:" << endl;
+        yourList.printAllNodes();
+        cout << endl << endl;
+        cout << "------------MENU------------" << endl;
         cout << "A)dd Node to Head" << endl;
         cout << "Add (N)ode to Tail" << endl;
         cout << "I)nsert Node after a postion" << endl;
         cout << "D)elete Node from a position" << endl;
+        cout << "R)everse List" << endl;
+        cout << "C)opy List 1 to List 2" << endl;
         cout << "Q)uit" << endl << endl << "Command: ";
 
         cin >> choice;
@@ -185,6 +238,11 @@ int main(){
                 cin >> ithPosition;
                 myList.deleteIthNode(ithPosition);            
             break;
+            case 'R':
+                myList.reverseList();
+            break;
+            case 'C':
+                yourList = myList;
         }
     }
     while(choice != 'Q');
