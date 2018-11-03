@@ -31,21 +31,7 @@ public:
         head = 0;
         tail = 0;
     }
-    // overload operator=
-    SLinkedList& operator=(SLinkedList &list){
 
-        while(head !=NULL)
-            deleteAllNodes();
-
-        SLinkedList *current;
-        current->head=list->head;
-        while(current != NULL){
-            addNodeToHead(current->data);
-            current=current->next;
-        }
-        head=current;
-        return *this;
-    }
     // Page 79
     void addNodeToHead(string passedData){
 
@@ -53,7 +39,6 @@ public:
         if (tail == 0)
             tail = head;
     }
-    
     // Page 79
     void addNodeToTail(string passedData){
         if (tail !=0){
@@ -185,6 +170,7 @@ public:
 private:
     Node *head, *tail;
 };
+
 
 int main(){
     SLinkedList myList;
