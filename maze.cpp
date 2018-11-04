@@ -1,72 +1,8 @@
 #include <fstream>
-#include <cstring>
+
 #include <iostream>
-#include <string>
-#include <algorithm>
-#include <vector>
 
-using namespace std;
 
-class Cell {
-public:
-	// Default constructor that creates a blank cell (3x3 grid of '.')
-	Cell() {
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
-				content[i][j] = '.';
-			}
-		}
-		isAWall, isStart, isFinish, isBarrier, hasBeenVisited = false;
-		cellLocX, cellLocY = 0;
-	}
-
-	// overloaded constructor that accepts a char to add to cell ID (index 1,1)
-	Cell(char cellType) {
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
-				// if a wall, 'X' and flag, otherwise '.'
-				if (cellType == 'X' || cellType == 'x') { content[i][j] = 'X'; isAWall = true; }
-				else { content[i][j] = '.'; }
-			}
-		}
-		// Set flags based on passed cellType
-		if (cellType == 'S' || cellType == 's') { content[1][1] = 'S'; isStart = true; }
-		else if (cellType == 'F' || cellType == 'f') { content[1][1] = 'F'; isFinish = true; }
-
-		isBarrier, hasBeenVisited = false;
-		cellLocX, cellLocY = 0;
-	}
-
-	// Update the celltype after creation(same as overloaded constructor)
-	void UpdateCellType(char cellType) {
-		for (int i = 0; i < 3; i++) {
-			for (int j = 0; j < 3; j++) {
-				// if a wall, 'X' and flag, otherwise '.'
-				if (cellType == 'X' || cellType == 'x') { content[i][j] = 'X'; isAWall = true; }
-				else { content[i][j] = '.'; }
-			}
-		}
-		// Set flags based on passed cellType
-		if (cellType == 'S' || cellType == 's') { content[1][1] = 'S'; isStart = true; }
-		else if (cellType == 'F' || cellType == 'f') { content[1][1] = 'F'; isFinish = true; }
-
-		isBarrier, hasBeenVisited = false;
-		cellLocX, cellLocY = 0;
-	}
-	// future functionality
-	bool UpdateCellHasBeenVisited() {
-		hasBeenVisited = true;
-	}
-	// used in printing and writing to file/ future will put those functions in here
-	char ReturnCellValue(int row, int col) {
-		return content[row][col];
-	}
-
-protected:
-	char content[3][3];
-	int cellLocX, cellLocY;
-	bool isAWall, isStart, isFinish, isBarrier, hasBeenVisited;
-};
 
 class DLNode{
 public:
@@ -75,47 +11,124 @@ public:
 		next = NULL;
 	}
 
-	DLNode(Cell passedCell, DLNode *prevPtr = 0, DLNode *nextPtr = 0){
-		mazeCell = passedCell;
+	DLNode(char passed, DLNode *prevPtr = 0, DLNode *nextPtr = 0){
+		if(passed != 'X'){
+			cell[1][1] = passed;
+		}
+		else{
+			for(int i = 0; i<3;i++)
+				for(int j = 0;j<3;j++)
+					cell[i][j] = 'X';
+		}
 		prev = prevPtr;
 		next = nextPtr;
 	}
-	Cell mazeCell;
 	DLNode *prev;
 	DLNode *next;
-}
+	char cell[3][3] = { {'.','.','.'}, {'.','.','.'},{'.','.','.'} };
+	int nodeX, nodeY;
+};
 
+class DoublyLinkedList {
+public:
+	DoublyLinkedList() {
+		head = 0;
+		tail = 0;
+	}
+	DoublyLinkedList(int row, int col){
+		head = 0;
+		tail = 0;
+		sizeRow = row;
+		sizeCol = col;
+	}
 
+	void addDLNode(char data, int x, int y) {
+		if (tail != 0) {
+			DLNode *temp = tail;
+
+			tail->next = new DLNode(data);
+
+			tail = tail->next;
+			tail->prev = temp;
+			tail->nodeX = x;
+			tail->nodeY = y;
+		}
+		else {
+			head = tail = new DLNode(data);
+			head->nodeX = x;
+			head->nodeY = y;
+		}
+	}
+
+	void updateDLNode(char data, int x, int y){
+		DLNode *temp = head;
+		
+		while(temp){
+			if(temp->nodeX == x && temp->nodeY == y){
+				if(data !='X') temp->cell[1][1] = data;
+				else{
+					for(int i=0;i<3;i++){
+						for(int j=0;j<3;j++){
+							temp->cell[i][j] = data;
+						}
+					}
+				}
+			}
+			temp = temp->next;
+		}
+	}
+
+	void printNodes(int rowSize, int colSize) {
+		DLNode *temp = head;
+		
+		while(temp){
+			for (int i = 0; i < rowSize; i++){
+				for(int j = 0; j < colSize; j++){
+					std::cout << temp->cell[i][j];
+						
+				}
+				
+				std::cout << std::endl;
+			}
+			temp = temp->next;
+		}
+	}
+
+	DLNode *head, *tail;
+	int sizeRow, sizeCol;
+};
+
+/*
 // Print the array of Cell Objects to STD_OUT
 // Need to work on passing 2D array by ref
 // So we dont have to define the size of the array here
-void PrintArray(Cell ** array, int rowSize, int colSize) {
+void printNodes(int rowSize, int colSize) {
 	// Add numerical header to displayed grid
-	cout << "   ";
+	std::cout << "   ";
 	for (int i = 0; i < colSize; i++) {
 		if (i < 10) {
-			cout << "  " << i << "   ";
+			std::cout << "  " << i << "   ";
 		}
 		else {
-			cout << "  " << i << "  ";
+			std::cout << "  " << i << "  ";
 		}
 	}
-	cout << endl;
+	std::cout << std::endl;
 	// iterating through the array
 	for (int i = 0; i < rowSize; i++) {
 		for (int m = 0; m < 3; m++) {
 			// Add row count to first column
 			if (m == 1) {
-				if (i < 10) { cout << i << "  "; }
-				else { cout << i << " "; }
+				if (i < 10) { std::cout << i << "  "; }
+				else { std::cout << i << " "; }
 			}
-			else { cout << "   "; }
+			else { std::cout << "   "; }
 			for (int j = 0; j < colSize; j++) {
 				for (int n = 0; n < 3; n++) {
-					cout << array[i][j].ReturnCellValue(m, n) << " ";
+					std::cout << array[i][j].ReturnCellValue(m, n) << " ";
 				}
 			}
-			cout << endl;
+			std::cout << std::endl;
 		}
 	}
 }
@@ -127,7 +140,7 @@ void WriteArray(Cell ** array, int rowSize, int colSize) {
 	outFile.open("outputFile");
 
 	// Add numerical header to displayed grid
-	cout << "   ";
+	std::cout << "   ";
 	for (int i = 0; i < colSize; i++) {
 		if (i < 10) {
 			outFile << "  " << i << "   ";
@@ -136,7 +149,7 @@ void WriteArray(Cell ** array, int rowSize, int colSize) {
 			outFile << "  " << i << "  ";
 		}
 	}
-	outFile << endl;
+	outFile << std::endl;
 	// iterating through the array
 	for (int i = 0; i < rowSize; i++) {
 		for (int m = 0; m < 3; m++) {
@@ -151,12 +164,12 @@ void WriteArray(Cell ** array, int rowSize, int colSize) {
 					outFile << array[i][j].ReturnCellValue(m, n) << " ";
 				}
 			}
-			outFile << endl;
+			outFile << std::endl;
 		}
 	}
 	outFile.close();
 }
-
+*/
 int main() {
 
 // Dirty read/parse file (must be all ints)
@@ -167,7 +180,7 @@ int main() {
 	int wallRow, wallCol;
 
 	// Open and read size and start/finish positions from inputfile
-	ifstream myFile;
+	std::ifstream myFile;
 	myFile.open("inputFile");
 	myFile >> colSize >> rowSize;
 	myFile >> startCol >> startRow >> finishCol >> finishRow;
@@ -176,17 +189,25 @@ int main() {
 	if(colSize < 0 || rowSize < 0 ||  startCol < 0 || 
 		startCol > colSize ||  startRow < 0 || startRow > rowSize || 
 		finishCol < 0 || finishCol > colSize||  finishRow < 0 || finishRow > rowSize ){
-		cout << "There was an error!  Check file contents." 
+		std::cout << "There was an error!  Check file contents." 
 			<< "One of the input numbers is out of range." 
-			<< endl << "File input checked: Size, Start, and Finish Coordinates." 
-			<< endl;
+			<< std::endl << "File input checked: Size, Start, and Finish Coordinates." 
+			<< std::endl;
 		return 1;
 	}
 
-	// Create the array of objects
-	Cell** maze;
-	maze = new Cell*[rowSize];
-	for (int i = 0; i < rowSize; i++) { maze[i] = new Cell[colSize]; }
+	// Create a Doubly Linked List
+	DoublyLinkedList* maze = new DoublyLinkedList(rowSize,colSize);
+	for (int i = 0; i <  rowSize; i++){
+		for(int j = 0; j<colSize; j++){
+			maze->addDLNode('.',i,j);
+		}
+	}
+
+	maze->updateDLNode('S',startRow,startCol);
+	maze->updateDLNode('F',finishRow,finishCol);
+
+
 
 	// UpdateCells to walls based on inputFile data
 	for (int h = 0; h < 79; h++) {
@@ -194,31 +215,30 @@ int main() {
 
 		// error check the file input
 		if (wallCol < 0 || wallCol > colSize || wallRow < 0 || wallRow > rowSize){
-			cout << "There was an error!  Check file contents." 
+			std::cout << "There was an error!  Check file contents." 
 				<< "One of the input numbers is out of range." 
-				<< endl << "File input checked: Wall Cordinates." 
-				<< endl;
+				<< std::endl << "File input checked: Wall Cordinates." 
+				<< std::endl;
 			return 1;
 		}
-		maze[wallRow][wallCol].UpdateCellType('X');
+		maze->updateDLNode('X',wallRow,wallCol);
 	}
 	
-	// UpdateCells to start/finish
-	maze[startCol][startRow].UpdateCellType('S');
-	maze[finishCol][finishRow].UpdateCellType('F');
+	maze->printNodes(rowSize, colSize);
 
 	// Close File
 	myFile.close();
 
 	// Print to the Screen
-	PrintArray(maze, rowSize, colSize);
+
 
 	// Write to file
-	WriteArray(maze, rowSize, colSize);
+
 
 	// Press a key
-	cout << endl << "Press <Enter> to continue..." << endl;
-	cin.get();
+	std::cout << std::endl << "Press <Enter> to continue..." << std::endl;
+
+	std::cin.get();
 	
 	return 0;
 }
