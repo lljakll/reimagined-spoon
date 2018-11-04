@@ -68,6 +68,24 @@ protected:
 	bool isAWall, isStart, isFinish, isBarrier, hasBeenVisited;
 };
 
+class DLNode{
+public:
+	DLNode(){
+		prev = NULL;
+		next = NULL;
+	}
+
+	DLNode(Cell passedCell, DLNode *prevPtr = 0, DLNode *nextPtr = 0){
+		mazeCell = passedCell;
+		prev = prevPtr;
+		next = nextPtr;
+	}
+	Cell mazeCell;
+	DLNode *prev;
+	DLNode *next;
+}
+
+
 // Print the array of Cell Objects to STD_OUT
 // Need to work on passing 2D array by ref
 // So we dont have to define the size of the array here
