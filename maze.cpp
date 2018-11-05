@@ -1,9 +1,7 @@
 #include <fstream>
-
 #include <iostream>
 
-
-
+// Node declaration/definition
 class DLNode{
 public:
 	DLNode(){
@@ -29,6 +27,7 @@ public:
 	int nodeX, nodeY;
 };
 
+// The list that holds the maze data
 class DoublyLinkedList {
 public:
 	DoublyLinkedList() {
@@ -42,29 +41,41 @@ public:
 		sizeCol = col;
 	}
 
+	// Adds a node to the list.
 	void addDLNode(char data, int x, int y) {
+		// If there are nodes, point at the end
 		if (tail != 0) {
 			DLNode *temp = tail;
-
+			// Create the new node with passed data. Point at it with tail->next
 			tail->next = new DLNode(data);
-
+			// Point tail at that new node
 			tail = tail->next;
+			// Point that node's prev at the current node
 			tail->prev = temp;
+			// update x,y of the new node
 			tail->nodeX = x;
 			tail->nodeY = y;
 		}
 		else {
+			// The list is empty, create a new node and point head/tail at it
 			head = tail = new DLNode(data);
+			// update x,y of the new node
 			head->nodeX = x;
 			head->nodeY = y;
 		}
 	}
 
+	// Updates the contents of node x,y with passed data.
+	// All except 'X' are updated in element 1,1.  X causes all
+	// elements to be updated
 	void updateDLNode(char data, int x, int y){
 		DLNode *temp = head;
 		
+		// Iterate through the list
 		while(temp){
+			// Find the node with the passed x,y
 			if(temp->nodeX == x && temp->nodeY == y){
+				// Update the node based on passed data.(all X or 1,1 element)
 				if(data !='X') temp->cell[1][1] = data;
 				else{
 					for(int i=0;i<3;i++){
@@ -78,102 +89,128 @@ public:
 		}
 	}
 
-	void printNodes(int rowSize, int colSize) {
-		DLNode *temp = head;
+	// This function iterates through each row of the arrays 
+	// in the nodes of each row and outputs them one at at time.
+	void printNodes() {
 		
-		while(temp){
-			for (int i = 0; i < rowSize; i++){
-				for(int j = 0; j < colSize; j++){
-					std::cout << temp->cell[i][j];
-						
-				}
-				
-				std::cout << std::endl;
+		// Add numerical header to displayed grid
+		std::cout << "   ";
+		for (int i = 0; i < sizeCol; i++) {
+			if (i < 10) {
+				std::cout << "  " << i << "   ";
 			}
-			temp = temp->next;
+			else {
+				std::cout << "  " << i << "  ";
+			}
 		}
+
+		// Create pointers for row and temp
+		DLNode *rowPtr = head;
+		int rowNodeCount, colNodeCount;
+		DLNode *temp = head;
+
+		// Which node on the row are we at.  Used for condition check
+		rowNodeCount=0;
+		while(rowNodeCount < sizeRow && temp != NULL){
+			// iterate the row of the nodes array
+			for(int i=0;i<3;i++){
+				std::cout << std::endl;
+
+				// Add row count to first column
+				if (i == 1) {
+					if (rowNodeCount < 10) { std::cout << rowNodeCount << "  "; }
+					else { std::cout << rowNodeCount << " "; }
+				}
+				else { std::cout << "   "; }
+				// Move temp to the 1st node of the current row
+				temp = rowPtr;
+				colNodeCount=0;
+				while(colNodeCount < sizeCol){
+					for(int j=0;j<3;j++){
+						std::cout << temp->cell[i][j] << " ";
+					}
+					colNodeCount++;
+					// Move temp forward if it is not tail/NULL otherwise
+					if(temp != tail)
+						temp = temp->next;
+					else
+						temp = NULL;
+				}
+			}
+			colNodeCount = 0;
+			// Move the rowPtr to the first node after sizeCol
+			// This simulates the next row of the Maze.
+			rowPtr = temp;
+			rowNodeCount++;
+		}
+	}
+	
+	// This function iterates through each row of the arrays 
+	// in the nodes of each row and outputs them one at at time.
+	void writeNodes() {
+		std::ofstream outFile;
+		outFile.open("outputFile");
+
+		// Add numerical header to displayed grid
+		outFile << "   ";
+		for (int i = 0; i < sizeCol; i++) {
+			if (i < 10) {
+				outFile << "  " << i << "   ";
+			}
+			else {
+				outFile << "  " << i << "  ";
+			}
+		}
+
+		// Create pointers for row and temp
+		DLNode *rowPtr = head;
+		int rowNodeCount, colNodeCount;
+		DLNode *temp = head;
+
+		// Which node on the row are we at.  Used for condition check
+		rowNodeCount=0;
+		while(rowNodeCount < sizeRow && temp != NULL){
+			// iterate the row of the nodes array
+			for(int i=0;i<3;i++){
+				outFile << std::endl;
+
+				// Add row count to first column
+				if (i == 1) {
+					if (rowNodeCount < 10) { outFile << rowNodeCount << "  "; }
+					else { outFile << rowNodeCount << " "; }
+				}
+				else { outFile << "   "; }
+
+				// Move temp to the 1st node of the current row
+				temp = rowPtr;
+				colNodeCount=0;
+				while(colNodeCount < sizeCol){
+					for(int j=0;j<3;j++){
+						outFile << temp->cell[i][j] << " ";
+					}
+					colNodeCount++;
+					// Move temp forward if it is not tail/NULL otherwise
+					if(temp != tail)
+						temp = temp->next;
+					else
+						temp = NULL;
+				}
+			}
+			colNodeCount = 0;
+			// Move the rowPtr to the first node after sizeCol
+			// This simulates the next row of the Maze.
+			rowPtr = temp;
+			rowNodeCount++;
+		}
+		outFile.close();
 	}
 
 	DLNode *head, *tail;
 	int sizeRow, sizeCol;
 };
 
-/*
-// Print the array of Cell Objects to STD_OUT
-// Need to work on passing 2D array by ref
-// So we dont have to define the size of the array here
-void printNodes(int rowSize, int colSize) {
-	// Add numerical header to displayed grid
-	std::cout << "   ";
-	for (int i = 0; i < colSize; i++) {
-		if (i < 10) {
-			std::cout << "  " << i << "   ";
-		}
-		else {
-			std::cout << "  " << i << "  ";
-		}
-	}
-	std::cout << std::endl;
-	// iterating through the array
-	for (int i = 0; i < rowSize; i++) {
-		for (int m = 0; m < 3; m++) {
-			// Add row count to first column
-			if (m == 1) {
-				if (i < 10) { std::cout << i << "  "; }
-				else { std::cout << i << " "; }
-			}
-			else { std::cout << "   "; }
-			for (int j = 0; j < colSize; j++) {
-				for (int n = 0; n < 3; n++) {
-					std::cout << array[i][j].ReturnCellValue(m, n) << " ";
-				}
-			}
-			std::cout << std::endl;
-		}
-	}
-}
-
-// Write the Array to the Output File
-void WriteArray(Cell ** array, int rowSize, int colSize) {
-
-	ofstream outFile;
-	outFile.open("outputFile");
-
-	// Add numerical header to displayed grid
-	std::cout << "   ";
-	for (int i = 0; i < colSize; i++) {
-		if (i < 10) {
-			outFile << "  " << i << "   ";
-		}
-		else {
-			outFile << "  " << i << "  ";
-		}
-	}
-	outFile << std::endl;
-	// iterating through the array
-	for (int i = 0; i < rowSize; i++) {
-		for (int m = 0; m < 3; m++) {
-			// Add row count to first column
-			if (m == 1) {
-				if (i < 10) { outFile << i << "  "; }
-				else { outFile << i << " "; }
-			}
-			else { outFile << "   "; }
-			for (int j = 0; j < colSize; j++) {
-				for (int n = 0; n < 3; n++) {
-					outFile << array[i][j].ReturnCellValue(m, n) << " ";
-				}
-			}
-			outFile << std::endl;
-		}
-	}
-	outFile.close();
-}
-*/
 int main() {
 
-// Dirty read/parse file (must be all ints)
-// want to move to function and parse no matter the content
 	int rowSize, colSize;
 	int startRow, startCol;
 	int finishRow, finishCol;
@@ -183,7 +220,7 @@ int main() {
 	std::ifstream myFile;
 	myFile.open("inputFile");
 	myFile >> colSize >> rowSize;
-	myFile >> startCol >> startRow >> finishCol >> finishRow;
+	myFile >> startRow >> startCol >> finishRow >> finishCol;
 
 	// error check the file input
 	if(colSize < 0 || rowSize < 0 ||  startCol < 0 || 
@@ -196,7 +233,7 @@ int main() {
 		return 1;
 	}
 
-	// Create a Doubly Linked List
+	// Create a Doubly Linked List with default content: "."'s
 	DoublyLinkedList* maze = new DoublyLinkedList(rowSize,colSize);
 	for (int i = 0; i <  rowSize; i++){
 		for(int j = 0; j<colSize; j++){
@@ -204,6 +241,8 @@ int main() {
 		}
 	}
 
+	// update the start and finish coordinages in the list
+	// passes the node coordinates(on a grid) to the function to find the node
 	maze->updateDLNode('S',startRow,startCol);
 	maze->updateDLNode('F',finishRow,finishCol);
 
@@ -223,21 +262,14 @@ int main() {
 		}
 		maze->updateDLNode('X',wallRow,wallCol);
 	}
-	
-	maze->printNodes(rowSize, colSize);
-
-	// Close File
 	myFile.close();
 
-	// Print to the Screen
-
-
-	// Write to file
-
+	// print and write to file.
+	maze->printNodes();
+	maze->writeNodes();
 
 	// Press a key
 	std::cout << std::endl << "Press <Enter> to continue..." << std::endl;
-
 	std::cin.get();
 	
 	return 0;
