@@ -2,6 +2,7 @@
 // the following methods: push(), pop(), top(), size(), and isEmpty(). 
 // The stack should be implemented as an array. 
 
+// Make it OS ambigious
 #ifdef __cplusplus__
   #include <cstdlib>
 #else
@@ -15,15 +16,20 @@ template <class T>
 class Stack{
 public:
 
+    // Clear the stack
     void Clear(){
         for (int i = this->Size(); i >= 0; i--)
             values[i] = {};
-    }  
+    }
+
+    // Check for an empty stack
     bool IsEmpty(){
         if(values[0]) 
             return false;
         return true;
     }
+
+    // Push to the stack
     void Push(T element){
         if(values[0]){
             for(int i = this->Size(); i >= 0; i--){
@@ -31,7 +37,9 @@ public:
             }
         }
         values[0] = element;
-    }  
+    }
+
+    // Pop from the stack
     T Pop(){
         T topElement = values[0];
         for (int i = 0; i < 20; i++){
@@ -40,11 +48,14 @@ public:
         values[20] = {};
         return topElement;
 }
+
+    // Return the top value
     T Top(){
         if(values[0]) return values[0];
         else return 0;
 }
 
+    // Return the size of the stack
     int Size(){
         if(!values){
             return 0;
@@ -58,6 +69,7 @@ public:
         }
     }
 
+    // Output the stack
     void PrintStack(){
         std::cout << std::endl;
         for(int i = 0; i < this->Size(); i++){
@@ -72,7 +84,7 @@ private:
     T values[20] = {};
     
 };
-
+    // Driver function for the Stack Class
     void Start(){
         using namespace std;
         char choice;
