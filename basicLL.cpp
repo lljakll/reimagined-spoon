@@ -1,12 +1,12 @@
 
 
-#include <iostream>
-#include <string>
+#include &lt;iostream&gt;
+#include &lt;string&gt;
 
 #ifdef __cplusplus__
-  #include <cstdlib>
+  #include &lt;cstdlib&gt;
 #else
-  #include <stdlib.h>
+  #include &lt;stdlib.h&gt;
 #endif
 
 using namespace std;
@@ -42,8 +42,8 @@ public:
     // Page 79
     void addNodeToTail(string passedData){
         if (tail !=0){
-            tail->next = new Node(passedData);
-            tail = tail->next;
+            tail-&gt;next = new Node(passedData);
+            tail = tail-&gt;next;
         }
         else   
             head = tail = new Node(passedData);
@@ -53,11 +53,11 @@ public:
         if(head !=0){
             Node *temp;
             // print nodes up to tail.  Figure out how to include tail in this loop
-            for(temp = head; temp->next != NULL; temp = temp->next){
-                cout << "* " << temp->data << endl;
+            for(temp = head; temp-&gt;next != NULL; temp = temp-&gt;next){
+                cout &lt;&lt; "* " &lt;&lt; temp-&gt;data &lt;&lt; endl;
             }
             // print tail node
-            cout << "* " << tail->data << endl;
+            cout &lt;&lt; "* " &lt;&lt; tail-&gt;data &lt;&lt; endl;
         }
     }
 
@@ -66,29 +66,29 @@ public:
         temp = head;    
 
         // error if request is greater than 0 and there is only one node
-        if(head == tail && ithNode > 0){
-            cout << "\nThere is only one node in the List.\nPress Enter.";
+        if(head == tail && ithNode &gt; 0){
+            cout &lt;&lt; "\nThere is only one node in the List.\nPress Enter.";
             cin.ignore();
             cin.get();
         }
         // the request is 0 and there is more than 1 node insert a new head
         else if(tail != head && ithNode == 0){
             head = new Node(passedData);
-            head->next = temp;
+            head-&gt;next = temp;
         }
         // if more than one node and request is not 0
         // set the temp pointer to the ith nodes's address
         // int i = 1 since head is already assigned and is considered node 0
         else{
-            for (int i = 1; i < ithNode; i++){
-                temp = temp->next;
+            for (int i = 1; i &lt; ithNode; i++){
+                temp = temp-&gt;next;
             }
             // Insert a node after the ith node
-            temp->next = new Node(passedData, temp->next);
+            temp-&gt;next = new Node(passedData, temp-&gt;next);
         }
     }
     void deleteAllNodes(){
-        Node *temp = head->next;
+        Node *temp = head-&gt;next;
         delete head;
         head = temp;
     }
@@ -103,26 +103,26 @@ public:
                 head = tail = 0;
             }
             // error if request is greater than 0 and there is only one node
-            else if(head == tail && ithNode > 0){
-                cout << "\nThere is only one node in the List.\nPress Enter.";
+            else if(head == tail && ithNode &gt; 0){
+                cout &lt;&lt; "\nThere is only one node in the List.\nPress Enter.";
             cin.ignore();
             cin.get();
             }
             // the request is 0 and there is more than 1 node del head and move head to node 1
             else if(tail != head && ithNode == 0){
-                head = head->next;
+                head = head-&gt;next;
                 delete temp;
             }
             // if more than one and request is not 0
             // set the temp pointer to the ith nodes's address
             // set the prev pointer to the ith - 1 address
             else{
-                prev = head, temp = head->next;
+                prev = head, temp = head-&gt;next;
 
-                for (int i = 1; i < ithNode; i++){
-                    prev = prev->next, temp = temp->next;
+                for (int i = 1; i &lt; ithNode; i++){
+                    prev = prev-&gt;next, temp = temp-&gt;next;
                 }
-                prev->next = temp->next;
+                prev-&gt;next = temp-&gt;next;
                 // Move tail if necessary
                 if(temp == tail)
                     tail = prev;
@@ -144,10 +144,10 @@ public:
             // curr is not at the end of the list
             while(curr != NULL){
                 // move next ptr to next node
-                next = curr->next;
+                next = curr-&gt;next;
 
                 // move curr-next ptr to previous addy
-                curr->next = prev;
+                curr-&gt;next = prev;
 
                 // move prev ptr to curr addy/then curr ptr to next addy
                 prev = curr;
@@ -180,57 +180,160 @@ int main(){
     string value;
     int ithPosition;
 
-    do{
-        if (system("clear")) system("CLS");
+    // Write a stack class in Java, C++, or Python, and implement
+// the following methods: push(), pop(), top(), size(), and isEmpty(). 
+// The stack should be implemented as an array. 
 
-        cout << "LIST 1:" << endl;
-        myList.printAllNodes();
-        cout << endl << endl;
-        cout << "LIST 2:" << endl;
-        yourList.printAllNodes();
-        cout << endl << endl;
-        cout << "------------MENU------------" << endl;
-        cout << "A)dd Node to Head" << endl;
-        cout << "Add (N)ode to Tail" << endl;
-        cout << "I)nsert Node after a postion" << endl;
-        cout << "D)elete Node from a position" << endl;
-        cout << "R)everse List" << endl;
-        cout << "C)opy List 1 to List 2" << endl;
-        cout << "Q)uit" << endl << endl << "Command: ";
+// Make it OS ambigious
+#ifdef __cplusplus__
+  #include &lt;cstdlib&gt;
+#else
+  #include &lt;stdlib.h&gt;
+#endif
 
-        cin >> choice;
-        choice = toupper(choice);
+#include &lt;iostream&gt;
+#include &lt;string&gt;
 
-        switch(choice){
-            case 'A':
-                cout << "Enter The value to add: ";
-                cin >> value;
-                myList.addNodeToHead(value);
-            break;
-            case 'N':
-                cout << "Enter The value to add: ";
-                cin >> value;
-                myList.addNodeToTail(value);
-            break;
-            case 'I':
-                cout << "Enter The value to add: ";
-                cin >> value;
-                cout << "Enter The Position: ";
-                cin >> ithPosition;
-                myList.addNodeAfterIthNode(value, ithPosition);
-            break;
-            case 'D':
-                cout << "Enter The Position to Delete: ";
-                cin >> ithPosition;
-                myList.deleteIthNode(ithPosition);            
-            break;
-            case 'R':
-                myList.reverseList();
-            break;
-            case 'C':
-                yourList = myList;
+template &lt;class T&gt;
+class Stack{
+public:
+
+    // Clear the stack
+    void Clear(){
+        for (int i = this-&gt;Size(); i &gt;= 0; i--)
+            values[i] = {};
+    }
+
+    // Check for an empty stack
+    bool IsEmpty(){
+        if(values[0]) 
+            return false;
+        return true;
+    }
+
+    // Push to the stack
+    void Push(T element){
+        if(values[0]){
+            for(int i = this-&gt;Size(); i &gt;= 0; i--){
+                values[i] = values[i-1];
+            }
+        }
+        values[0] = element;
+    }
+
+    // Pop from the stack
+    T Pop(){
+        T topElement = values[0];
+        for (int i = 0; i &lt; 20; i++){
+            values[i] = values[i+1];
+        }
+        values[20] = {};
+        return topElement;
+}
+
+    // Return the top value
+    T Top(){
+        if(values[0]) return values[0];
+        else return 0;
+}
+
+    // Return the size of the stack
+    int Size(){
+        if(!values){
+            return 0;
+        }
+        else{
+            int arraySize = 0;
+            for (int i = 0; i &lt; 20; i++){
+                if(values[i]) arraySize++;
+            }
+            return arraySize;   
         }
     }
-    while(choice != 'Q');
+
+    // Output the stack
+    void PrintStack(){
+        std::cout &lt;&lt; std::endl;
+        for(int i = 0; i &lt; this-&gt;Size(); i++){
+            std::cout &lt;&lt; "  - " &lt;&lt; values[i] &lt;&lt; std::endl;
+        }
+        std::cout &lt;&lt; std::endl &lt;&lt; " -&gt; Stack Size: " &lt;&lt; this-&gt;Size() &lt;&lt; std::endl;
+        std::cout &lt;&lt; " ____________________" &lt;&lt; std::endl;
+        std::cout &lt;&lt; std::endl;
+    }
+
+private:
+    T values[20] = {};
+    
+};
+    // Driver function for the Stack Class
+    void Start(){
+        using namespace std;
+        char choice;
+        char value;
+        Stack &lt;char&gt;testStack;
+        do{
+            if (system("clear")) system("CLS");
+            
+            cout &lt;&lt; "  (p)ush | p(o)p | (c)lear | (i)sEmpty | (t)op | (q)uit" &lt;&lt; endl &lt;&lt; endl;
+            cout &lt;&lt; "  -STACK-" &lt;&lt; endl;
+            testStack.PrintStack();
+            cout &lt;&lt; endl &lt;&lt; endl;
+            cout &lt;&lt; " -&gt; Command: ";
+
+            cin &gt;&gt; choice;
+            choice = toupper(choice);
+
+            switch(choice){
+                case 'P':
+                    cout &lt;&lt; " -&gt; Enter The value to PUSH to the Stack: ";
+                    cin &gt;&gt; value;
+                    testStack.Push(value);
+                break;
+                case 'O':
+                    value = testStack.Pop();
+                    if(value){
+                        cout &lt;&lt; endl &lt;&lt; " -&gt; " &lt;&lt; value &lt;&lt; " was Popped from the Stack.\n -&gt; Hit Enter.";
+                    }
+                    else{
+                        cout &lt;&lt; endl &lt;&lt; " -&gt; There are no values in the Stack.\n -&gt; Hit Enter";
+                    }
+                    cin.ignore();
+                    cin.get();
+                break;
+                case 'C':
+                    testStack.Clear();;
+                break;
+                case 'I':
+                    cout &lt;&lt; " -&gt; The Stack is ";
+
+                    if(testStack.IsEmpty()) cout &lt;&lt; "EMPTY";
+                    else cout &lt;&lt; "NOT EMPTY";
+                    
+                    cout &lt;&lt; endl &lt;&lt; "Press Enter";
+                    cin.ignore();
+                    cin.get();
+                break;
+                case 'T':
+                    if(testStack.Top()) cout &lt;&lt; " -&gt; The Top value is " &lt;&lt; testStack.Top();
+                    else cout &lt;&lt; " -&gt; There are no values in the Stack.";
+
+ 
+                    cout &lt;&lt; endl &lt;&lt; "Press Enter";
+                    cin.ignore();
+                    cin.get();
+                break;
+            }
+        }
+        while(choice != 'Q');
+            
+    }
+
+int main(){
+    
+    Start();
+
+    return 0;
+}
     return 0;
 }
