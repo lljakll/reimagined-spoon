@@ -1,10 +1,9 @@
-// week4.cpp : This file contains the 'main' function. Program execution begins and ends there.
 // Jackie Adair
 // CST-201
 // Week 4 Assignment
 // This is my own work
 //
-// #include "pch.h"
+#include "pch.h"
 #include <cstdlib>
 #include <iostream>
 #include <stack>
@@ -12,7 +11,7 @@
 #include <fstream>
 #include <vector>
 #include <deque>
-// #include <Windows.h>
+#include <Windows.h>
 
 // Node declaration/definition
 class DLNode {
@@ -211,8 +210,8 @@ public:
 	// in the nodes of each row and outputs them one at at time.
 	void printNodes() {
 
-		system("clear");
-		std::cout << std::endl << std::endl;
+		system("CLS");
+
 		// Add numerical header to displayed grid
 		std::cout << "   ";
 		for (int i = 0; i < sizeCol; i++) {
