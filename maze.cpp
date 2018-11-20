@@ -73,7 +73,7 @@ public:
 
 std::string CreateStringStream(DoublyLinkedList* tempList, int sizeRow, int sizeCol);
 void setCursorPosition(int x, int y);
-void BufferedScreenUpdate(std::string currentScreen, std::string newScreen);
+std::string BufferedScreenUpdate(std::string currentScreen, std::string newScreen);
 
 // The list that holds the maze data
 
@@ -652,9 +652,35 @@ std::string CreateStringStream(DoublyLinkedList* tempList, int numRows, int numC
 
 }
 
-void BufferedScreenUpdate(std::string currentScreen, std::string newScreen)
+std::string BufferedScreenUpdate(std::string currentScreen, std::string previousScreen)
 {
-
+	int MAX_Y = 0;
+	int MAX_X = 0;
+	for (int i = 0; i != NULL; i++)
+	{
+		if (currentScreen[i] != '\n')
+		{
+			MAX_Y++;
+		}
+		MAX_X++;
+	}
+	int iter = 0;
+	for (int y = 0; y != MAX_Y; ++y)
+	{
+		for (int x = 0; x != MAX_X; ++x)
+		{
+			if (currentScreen[iter] == previousScreen[iter])
+			{
+				continue;
+			}
+			setCursorPosition(y, x);
+			std::cout << currentScreen[iter];
+			iter++;
+		}
+	}
+	std::cout.flush();
+	
+	return currentScreen;
 }
 
 int main() {
