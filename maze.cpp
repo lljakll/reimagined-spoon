@@ -335,8 +335,8 @@ void DoublyLinkedList::BreadthFirstSolution() {
 
 	// loop until event occurs (0 lose, 2 win)
 	while (gameMode == 1) {
-		// sleep for .5 seconds
-		std::this_thread::sleep_for(std::chrono::milliseconds(200));
+		// sleep for .2 seconds
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		// set the current node to visited
 		currentNode->visited = 1;
 
@@ -452,6 +452,10 @@ void DoublyLinkedList::DepthFirstSolution() {
 
 	// loop until event occurs (0 lose, 2 win)
 	while (gameMode == 1) {
+
+		// sleep for .2 seconds
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
 		// set the current node to visited
 		currentNode->visited = 1;
 
@@ -540,7 +544,7 @@ void DoublyLinkedList::DepthFirstSolution() {
 
 		// output the stack while running
 		setCursorPosition(0, 0);
-		std::cout << std::endl << "Solution Path: ";
+		std::cout << "Solution Path: ";
 		int iter;
 		for (std::vector<int>::const_iterator iter = stackDisplay.begin(); iter != stackDisplay.end(); ++iter)
 		{
@@ -553,17 +557,19 @@ void DoublyLinkedList::DepthFirstSolution() {
 		prevScreen = BufferedScreenUpdate(currScreen, prevScreen);
 
 	}
+	setCursorPosition(0, 2
+);
 
 	// if gamemode 0 lose
 	if (gameMode == 0) {
-		std::cout << std::endl << "Game Over.  There is no path through the maze" << std::endl;
+		std::cout << "Game Over.  There is no path through the maze";
 	}
 	// else if gamemode = 2 win
 	else if (gameMode == 2) {
-		std::cout << std::endl << "Game Over.  Path Found!" << std::endl;
+		std::cout << "Game Over.  Path Found!";
 	}
 	else {
-		std::cout << std::endl << "GAME OVER.  Something Broke!" << std::endl;
+		std::cout << "GAME OVER.  Something Broke!";
 	}
 
 }
@@ -593,11 +599,11 @@ std::string CreateStringStream(DoublyLinkedList* tempList, int numRows, int numC
 	std::stringstream displayString;
 	
 	// Add top Wall
-//	displayString << " ";
-//	for (int i = 0; i < numCols; i++)
-//	{
-//		displayString << "------";
-//	}
+	displayString << " ";
+	for (int i = 0; i < numCols; i++)
+	{
+		displayString << "------";
+	}
 
 	// Create pointers for row and temp
 	DLNode *rowPtr = tempList->head;
@@ -615,7 +621,7 @@ std::string CreateStringStream(DoublyLinkedList* tempList, int numRows, int numC
 			temp = rowPtr;
 			colNodeCount = 0;
 			// Add Left wall
-//			displayString << "| ";
+			displayString << "| ";
 			// print the cells
 			while (colNodeCount < numCols) {
 				for (int j = 0; j < 3; j++) {
@@ -644,8 +650,9 @@ std::string CreateStringStream(DoublyLinkedList* tempList, int numRows, int numC
 						}
 						else
 						{
-							if (j == 1)
-								displayString << "=" << " ";
+							if (j == 1 && i == 0
+)
+								displayString << "<" << " ";
 							else
 								displayString << " " << " ";
 						}
@@ -660,7 +667,7 @@ std::string CreateStringStream(DoublyLinkedList* tempList, int numRows, int numC
 					temp = NULL;
 			}
 			// Add Right wall
-//			displayString << "|";
+			displayString << "|";
 		}
 		colNodeCount = 0;
 		// Move the rowPtr to the first node after numCols
@@ -670,11 +677,11 @@ std::string CreateStringStream(DoublyLinkedList* tempList, int numRows, int numC
 	}
 	// Add bottom Wall
 	
-//	displayString << std::endl << " ";
-//	for (int i = 0; i < numCols; i++)
-//	{
-//		displayString << "------";
-//	}
+	displayString << std::endl << " ";
+	for (int i = 0; i < numCols; i++)
+	{
+		displayString << "------";
+	}
 
 
 	return displayString.str();
@@ -716,6 +723,8 @@ std::string BufferedScreenUpdate(std::string currentScreen, std::string previous
 	return currentScreen;
 }
 
+
+
 int main() {
 	using namespace std;
 
@@ -746,6 +755,8 @@ int main() {
 			<< endl;
 		return 1;
 	}
+
+
 
 	// Create a Doubly Linked List with default content: "."'s
 	DoublyLinkedList* maze = new DoublyLinkedList(rowSize, colSize);
