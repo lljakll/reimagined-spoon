@@ -76,6 +76,8 @@ public:
 std::string CreateStringStream(DoublyLinkedList* tempList, int numRows, int numCols);
 void setCursorPosition(int x, int y);
 std::string BufferedScreenUpdate(std::string currentScreen, std::string newScreen);
+void StartGame();
+DoublyLinkedList ReadFileInputToList();
 
 // The list that holds the maze data
 
@@ -380,8 +382,8 @@ void DoublyLinkedList::BreadthFirstSolution() {
 			gameMode = 0;
 		}
 		// Output the Queue while running.
-		setCursorPosition(0, 0);
-		std::cout << std::endl << "Queue: ";
+		setCursorPosition(0, 2);
+		std::cout << "Queue: ";
 		std::deque <int> ::iterator it;
 		for (it = queueDisplay.begin(); it != queueDisplay.end(); ++it) {
 			std::cout << " < " << *it;
@@ -420,18 +422,20 @@ void DoublyLinkedList::BreadthFirstSolution() {
 		}
 	}
 
-	setCursorPosition(0, 1);
+	setCursorPosition(0, 4);
 
 	// if gamemode 0 lose
 	if (gameMode == 0) {
-		std::cout << std::endl << "Game Over.  There is no path through the maze" << std::endl;
+		std::cout << std::endl << "Game Over.  There is no path through the maze";
 	}
 	// else if gamemode = 2 win
 	else if (gameMode == 2) {
-		std::cout << std::endl << "Game Over.  Path Found!" << std::endl;
+		std::cout << "Game Over. Path Found! Press Enter";
+		std::cin.ignore();
+		std::cin.get();
 	}
 	else {
-		std::cout << std::endl << "GAME OVER.  Something Broke!" << std::endl;
+		std::cout << "GAME OVER.  Something Broke!";
 	}
 
 }
@@ -543,7 +547,7 @@ void DoublyLinkedList::DepthFirstSolution() {
 		}
 
 		// output the stack while running
-		setCursorPosition(0, 0);
+		setCursorPosition(0, 2);
 		std::cout << "Solution Path: ";
 		int iter;
 		for (std::vector<int>::const_iterator iter = stackDisplay.begin(); iter != stackDisplay.end(); ++iter)
@@ -557,8 +561,7 @@ void DoublyLinkedList::DepthFirstSolution() {
 		prevScreen = BufferedScreenUpdate(currScreen, prevScreen);
 
 	}
-	setCursorPosition(0, 2
-);
+	setCursorPosition(0, 4);
 
 	// if gamemode 0 lose
 	if (gameMode == 0) {
@@ -566,7 +569,9 @@ void DoublyLinkedList::DepthFirstSolution() {
 	}
 	// else if gamemode = 2 win
 	else if (gameMode == 2) {
-		std::cout << "Game Over.  Path Found!";
+		std::cout << "Game Over. Path Found! Press Enter";
+		std::cin.ignore();
+		std::cin.get();
 	}
 	else {
 		std::cout << "GAME OVER.  Something Broke!";
@@ -723,25 +728,61 @@ std::string BufferedScreenUpdate(std::string currentScreen, std::string previous
 	return currentScreen;
 }
 
-
-
-int main() {
+void StartGame()
+{
 	using namespace std;
+	char choice;
+	char input;
+	do
+	{
+		DoublyLinkedList maze;
+		maze = ReadFileInputToList();
+		maze.updateValidMovementDirections(maze.numCols, maze.numRows);
+		std::string currScreen = "";
+		currScreen = CreateStringStream(&maze, maze.numRows, maze.numCols);
 
-	cout << "Maximize this window if necessary, then Press Enter to start...";
-	cin.get();
-	setCursorPosition(0, 0);
-	cout << "                                                                   ";
+		BufferedScreenUpdate(currScreen, "");
+//		setCursorPosition(0, 0);
+//		std::cout << "                                                                                                                                                        ";
+//		setCursorPosition(0, 1); 
+//		std::cout << "                                                                                                                                                        ";
+//		setCursorPosition(0, 2);
+//		std::cout << "                                                                                                                                                        ";
+//		setCursorPosition(0, 3);
+//		std::cout << "                                                                                                                                                        ";
+//		setCursorPosition(0, 4);
+//		std::cout << "                                                                                                                                                        ";
+		setCursorPosition(0, 0);
+		std::cout << "Q)uit | B)readth First Search | D)epth First Search: ";
+		cin >> choice;
+		choice = toupper(choice);
+		switch (choice)
+		{
+		case 'B':
+			maze.BreadthFirstSolution();
+			system("CLS");
+			break;
 
+		case 'D':
+			maze.DepthFirstSolution();
+			system("CLS");
+			break;
+
+		}
+	} while (choice != 'Q');
+}
+
+DoublyLinkedList ReadFileInputToList()
+{
 	int rowSize, colSize;
 	int startRow, startCol;
 	int finishRow, finishCol;
 	int wallRow, wallCol;
 
 	// Open and read size and start/finish positions from inputfile
-	ifstream myFile;
+	std::ifstream myFile;
 	myFile.open("inputFile");
-	if (!myFile) { cout << "Bad File"; }
+	if (!myFile) { std::cout << "Bad File"; }
 	myFile >> colSize >> rowSize;
 	myFile >> startRow >> startCol >> finishRow >> finishCol;
 
@@ -749,11 +790,11 @@ int main() {
 	if (colSize < 0 || rowSize < 0 || startCol < 0 ||
 		startCol > colSize || startRow < 0 || startRow > rowSize ||
 		finishCol < 0 || finishCol > colSize || finishRow < 0 || finishRow > rowSize) {
-		cout << "There was an error!  Check file contents."
+		std::cout << "There was an error!  Check file contents."
 			<< "One of the input numbers is out of range."
-			<< endl << "File input checked: Size, Start, and Finish Coordinates."
-			<< endl;
-		return 1;
+			<< std::endl << "File input checked: Size, Start, and Finish Coordinates."
+			<< std::endl;
+		return {};
 	}
 
 
@@ -781,41 +822,31 @@ int main() {
 
 		// error check the file input
 		if (wallCol < 0 || wallCol > colSize || wallRow < 0 || wallRow > rowSize) {
-			cout << "There was an error!  Check file contents."
+			std::cout << "There was an error!  Check file contents."
 				<< "One of the input numbers is out of range."
-				<< endl << "File input checked: Wall Cordinates."
-				<< endl;
-			return 1;
+				<< std::endl << "File input checked: Wall Cordinates."
+				<< std::endl;
+			return {};
 		}
 		maze->updateDLNode('X', wallRow, wallCol);
 	}
 	myFile.close();
 
-	// update the lists valid movements per cell
-	maze->updateValidMovementDirections(colSize, rowSize);
+	return *maze;
 
+}
 
-	// run stack solver (Depth First)
-	//maze->DepthFirstSolution();
+int main() {
+	using namespace std;
 
-	// run queue solver (Breadth First)
-	//maze->BreadthFirstSolution();
+	// Warn to mazimixe the screen then clear the warning.
+	cout << "Maximize this window if necessary, then Press Enter to start...";
+	cin.get();
+	setCursorPosition(0, 0);
+	cout << "                                                                   ";
 
-//	std::string prevScreen, curScreen;
-//		curScreen = CreateStringStream(maze, rowSize, colSize);
-
-	// initial screen draw
-//	prevScreen = BufferedScreenUpdate(curScreen, "", rowSize, colSize);
-
-	// updates the maze
-	maze->DepthFirstSolution();
-//	maze->BreadthFirstSolution();
-
-	// redraw screen with new cur string and prev screen returnded from prev call to bufscrnupdate
-//	curScreen = CreateStringStream(maze, rowSize, colSize);
-//	prevScreen = BufferedScreenUpdate(curScreen, prevScreen, rowSize, colSize);
-
-//	maze->TestStringStream();
+	// Call the Game Start
+	StartGame();
 
 	// Press a key
 	cout << endl << "Press <Enter> to continue...";
