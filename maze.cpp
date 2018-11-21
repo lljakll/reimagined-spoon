@@ -13,6 +13,8 @@
 #include <deque>
 #include <sstream>
 #include <Windows.h>
+#include <chrono>
+#include <thread>
 
 // Node declaration/definition
 class DLNode {
@@ -68,10 +70,10 @@ public:
 	void TestStringStream();
 
 	DLNode *head, *tail;
-	int sizeRow, sizeCol;
+	int numRows, numCols;
 };
 
-std::string CreateStringStream(DoublyLinkedList* tempList, int sizeRow, int sizeCol);
+std::string CreateStringStream(DoublyLinkedList* tempList, int numRows, int numCols);
 void setCursorPosition(int x, int y);
 std::string BufferedScreenUpdate(std::string currentScreen, std::string newScreen);
 
@@ -84,8 +86,8 @@ DoublyLinkedList::DoublyLinkedList() {
 DoublyLinkedList::DoublyLinkedList(int row, int col) {
 	head = 0;
 	tail = 0;
-	sizeRow = row;
-	sizeCol = col;
+	numRows = row;
+	numCols = col;
 }
 
 // Adds a node to the list.
@@ -235,7 +237,7 @@ void DoublyLinkedList::printNodes() {
 
 	// Add numerical header to displayed grid
 	std::cout << "   ";
-	for (int i = 0; i < sizeCol; i++) {
+	for (int i = 0; i < numCols; i++) {
 		if (i < 10) {
 			std::cout << "  " << i << "   ";
 		}
@@ -251,7 +253,7 @@ void DoublyLinkedList::printNodes() {
 
 	// Which node on the row are we at.  Used for condition check
 	rowNodeCount = 0;
-	while (rowNodeCount < sizeRow && temp != NULL) {
+	while (rowNodeCount < numRows && temp != NULL) {
 		// iterate the row of the nodes array
 		for (int i = 0; i < 3; i++) {
 			std::cout << std::endl;
@@ -266,7 +268,7 @@ void DoublyLinkedList::printNodes() {
 			temp = rowPtr;
 			colNodeCount = 0;
 			// print the cells
-			while (colNodeCount < sizeCol) {
+			while (colNodeCount < numCols) {
 				for (int j = 0; j < 3; j++) {
 					if (!temp->visited && !temp->backTrack) {
 						std::cout << temp->cell[i][j] << " ";
@@ -310,7 +312,7 @@ void DoublyLinkedList::printNodes() {
 			}
 		}
 		colNodeCount = 0;
-		// Move the rowPtr to the first node after sizeCol
+		// Move the rowPtr to the first node after numCols
 		// This simulates the next row of the Maze.
 		rowPtr = temp;
 		rowNodeCount++;
@@ -324,10 +326,17 @@ void DoublyLinkedList::BreadthFirstSolution() {
 	DLNode *temp = head;
 	DLNode *currentNode = head;
 	int gameMode = 1;
-	//this->printNodes();
+	std::string prevScreen = "";
+	std::string currScreen = "";
+	
+	currScreen = CreateStringStream(this, numRows, numCols);
+	prevScreen = BufferedScreenUpdate(currScreen, prevScreen);
+
 
 	// loop until event occurs (0 lose, 2 win)
 	while (gameMode == 1) {
+		// sleep for .5 seconds
+		std::this_thread::sleep_for(std::chrono::milliseconds(200));
 		// set the current node to visited
 		currentNode->visited = 1;
 
@@ -371,13 +380,17 @@ void DoublyLinkedList::BreadthFirstSolution() {
 			gameMode = 0;
 		}
 		// Output the Queue while running.
-		//std::cout << std::endl << "Queue: ";
-		//std::deque <int> ::iterator it;
-		//for (it = queueDisplay.begin(); it != queueDisplay.end(); ++it) {
-		//	std::cout << " < " << *it;
-		//}
+		setCursorPosition(0, 0);
+		std::cout << std::endl << "Queue: ";
+		std::deque <int> ::iterator it;
+		for (it = queueDisplay.begin(); it != queueDisplay.end(); ++it) {
+			std::cout << " < " << *it;
+		}
+		std::cout << "                                                                            ";
+		// redraw the screen after updates to currScreen
+		currScreen = CreateStringStream(this, numRows, numCols);
+		prevScreen = BufferedScreenUpdate(currScreen, prevScreen);
 
-		//this->printNodes();
 		// if the queue is empty, bypass all of this and end game
 		if (!solutionQueue.empty()) {
 			// set current cell number to next number in queue
@@ -407,6 +420,8 @@ void DoublyLinkedList::BreadthFirstSolution() {
 		}
 	}
 
+	setCursorPosition(0, 1);
+
 	// if gamemode 0 lose
 	if (gameMode == 0) {
 		std::cout << std::endl << "Game Over.  There is no path through the maze" << std::endl;
@@ -429,7 +444,11 @@ void DoublyLinkedList::DepthFirstSolution() {
 	DLNode *currentNode = head;
 	int gameMode = 1;
 	int deadEnd = 0;
-	this->printNodes();
+	std::string prevScreen = "";
+	std::string currScreen = "";
+
+	currScreen = CreateStringStream(this, numRows, numCols);
+	prevScreen = BufferedScreenUpdate(currScreen, prevScreen);
 
 	// loop until event occurs (0 lose, 2 win)
 	while (gameMode == 1) {
@@ -518,11 +537,21 @@ void DoublyLinkedList::DepthFirstSolution() {
 				currentNode->backTrack = true;
 			}
 		}
+
+		// output the stack while running
+		setCursorPosition(0, 0);
 		std::cout << std::endl << "Solution Path: ";
 		int iter;
 		for (std::vector<int>::const_iterator iter = stackDisplay.begin(); iter != stackDisplay.end(); ++iter)
+		{
 			std::cout << *iter << " ";
-		this->printNodes();
+		}
+		std::cout << "                                                                             ";
+
+		// redraw the screen after updates to currScreen
+		currScreen = CreateStringStream(this, numRows, numCols);
+		prevScreen = BufferedScreenUpdate(currScreen, prevScreen);
+
 	}
 
 	// if gamemode 0 lose
@@ -542,7 +571,7 @@ void DoublyLinkedList::DepthFirstSolution() {
 void DoublyLinkedList::TestStringStream()
 {
 	std::string tempStream;
-	tempStream = CreateStringStream(this, sizeRow, sizeCol);
+	tempStream = CreateStringStream(this, numRows, numCols);
 
 
 
@@ -564,11 +593,11 @@ std::string CreateStringStream(DoublyLinkedList* tempList, int numRows, int numC
 	std::stringstream displayString;
 	
 	// Add top Wall
-	displayString << " ";
-	for (int i = 0; i < numCols; i++)
-	{
-		displayString << "------";
-	}
+//	displayString << " ";
+//	for (int i = 0; i < numCols; i++)
+//	{
+//		displayString << "------";
+//	}
 
 	// Create pointers for row and temp
 	DLNode *rowPtr = tempList->head;
@@ -586,7 +615,7 @@ std::string CreateStringStream(DoublyLinkedList* tempList, int numRows, int numC
 			temp = rowPtr;
 			colNodeCount = 0;
 			// Add Left wall
-			displayString << "| ";
+//			displayString << "| ";
 			// print the cells
 			while (colNodeCount < numCols) {
 				for (int j = 0; j < 3; j++) {
@@ -631,21 +660,21 @@ std::string CreateStringStream(DoublyLinkedList* tempList, int numRows, int numC
 					temp = NULL;
 			}
 			// Add Right wall
-			displayString << "|";
+//			displayString << "|";
 		}
 		colNodeCount = 0;
-		// Move the rowPtr to the first node after sizeCol
+		// Move the rowPtr to the first node after numCols
 		// This simulates the next row of the Maze.
 		rowPtr = temp;
 		rowNodeCount++;
 	}
 	// Add bottom Wall
 	
-	displayString << std::endl << " ";
-	for (int i = 0; i < numCols; i++)
-	{
-		displayString << "------";
-	}
+//	displayString << std::endl << " ";
+//	for (int i = 0; i < numCols; i++)
+//	{
+//		displayString << "------";
+//	}
 
 
 	return displayString.str();
@@ -654,28 +683,32 @@ std::string CreateStringStream(DoublyLinkedList* tempList, int numRows, int numC
 
 std::string BufferedScreenUpdate(std::string currentScreen, std::string previousScreen)
 {
-	int MAX_Y = 0;
-	int MAX_X = 0;
-	for (int i = 0; i != NULL; i++)
+
+	int x = 0;
+	int y = 6;
+	setCursorPosition(x, y);
+	for (int iter = 0; iter < currentScreen.length(); iter++)
 	{
-		if (currentScreen[i] != '\n')
-		{
-			MAX_Y++;
-		}
-		MAX_X++;
-	}
-	int iter = 0;
-	for (int y = 0; y != MAX_Y; ++y)
-	{
-		for (int x = 0; x != MAX_X; ++x)
+		if (previousScreen.length() == currentScreen.length())
 		{
 			if (currentScreen[iter] == previousScreen[iter])
 			{
+				if (currentScreen[iter] == '\n')
+				{
+					y++;
+					x = -1;
+				}
+				x++;
 				continue;
 			}
-			setCursorPosition(y, x);
-			std::cout << currentScreen[iter];
-			iter++;
+		}
+		setCursorPosition(x, y);
+		std::cout << currentScreen[iter];
+		x++;
+		if (currentScreen[iter] == '\n')
+		{
+			y++;
+			x = 0;
 		}
 	}
 	std::cout.flush();
@@ -686,8 +719,10 @@ std::string BufferedScreenUpdate(std::string currentScreen, std::string previous
 int main() {
 	using namespace std;
 
-	//cout << "Maximize this window if necessary, then Press Enter to start...";
-	//cin.get();
+	cout << "Maximize this window if necessary, then Press Enter to start...";
+	cin.get();
+	setCursorPosition(0, 0);
+	cout << "                                                                   ";
 
 	int rowSize, colSize;
 	int startRow, startCol;
@@ -755,18 +790,24 @@ int main() {
 	// run queue solver (Breadth First)
 	//maze->BreadthFirstSolution();
 
-	std::string tempStream1, tempStream2;
-	tempStream1 = CreateStringStream(maze, rowSize, colSize);
-	cout << tempStream1;
+//	std::string prevScreen, curScreen;
+//		curScreen = CreateStringStream(maze, rowSize, colSize);
 
-	maze->BreadthFirstSolution();
+	// initial screen draw
+//	prevScreen = BufferedScreenUpdate(curScreen, "", rowSize, colSize);
 
-	tempStream2 = CreateStringStream(maze, rowSize, colSize);
-	cout << tempStream2;
+	// updates the maze
+	maze->DepthFirstSolution();
+//	maze->BreadthFirstSolution();
 
+	// redraw screen with new cur string and prev screen returnded from prev call to bufscrnupdate
+//	curScreen = CreateStringStream(maze, rowSize, colSize);
+//	prevScreen = BufferedScreenUpdate(curScreen, prevScreen, rowSize, colSize);
+
+//	maze->TestStringStream();
 
 	// Press a key
-	cout << endl << "Press <Enter> to continue..." << endl;
+	cout << endl << "Press <Enter> to continue...";
 	cin.get();
 
 	return 0;
