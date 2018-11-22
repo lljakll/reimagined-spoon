@@ -1,6 +1,6 @@
 // Jackie Adair
 // CST-201
-// Week 4 Assignment
+// Week 5 Assignment
 // This is my own work
 //
 #include "pch.h"
@@ -16,7 +16,8 @@
 #include <chrono>
 #include <thread>
 
-// Node declaration/definition
+// *************DECLARATIONS*********************************************************
+
 class DLNode {
 public:
 	DLNode() {
@@ -53,6 +54,7 @@ public:
 	bool down = true;
 	bool left = true;
 	int mzCellNum = 0;
+	int manhattanDistanceToFinish = 0;
 };
 
 class DoublyLinkedList {
@@ -78,8 +80,9 @@ void setCursorPosition(int x, int y);
 std::string BufferedScreenUpdate(std::string currentScreen, std::string newScreen);
 void StartGame();
 DoublyLinkedList ReadFileInputToList();
+void ManhattanDistanceCalculator(DoublyLinkedList* tempList);
 
-// The list that holds the maze data
+//***************DEFINITIONS**********************************************************
 
 DoublyLinkedList::DoublyLinkedList() {
 	head = 0;
@@ -549,7 +552,6 @@ void DoublyLinkedList::DepthFirstSolution() {
 		// output the stack while running
 		setCursorPosition(0, 2);
 		std::cout << "Solution Path: ";
-		int iter;
 		for (std::vector<int>::const_iterator iter = stackDisplay.begin(); iter != stackDisplay.end(); ++iter)
 		{
 			std::cout << *iter << " ";
@@ -732,7 +734,6 @@ void StartGame()
 {
 	using namespace std;
 	char choice;
-	char input;
 	do
 	{
 		DoublyLinkedList maze;
@@ -753,7 +754,7 @@ void StartGame()
 //		setCursorPosition(0, 4);
 //		std::cout << "                                                                                                                                                        ";
 		setCursorPosition(0, 0);
-		std::cout << "Q)uit | B)readth First Search | D)epth First Search: ";
+		std::cout << "Q)uit | B)readth First Search | D)epth First Search | M)anhattan: ";
 		cin >> choice;
 		choice = toupper(choice);
 		switch (choice)
@@ -766,6 +767,10 @@ void StartGame()
 		case 'D':
 			maze.DepthFirstSolution();
 			system("CLS");
+			break;
+		case 'M':
+			setCursorPosition(0, 42);
+			ManhattanDistanceCalculator(&maze);
 			break;
 
 		}
@@ -835,6 +840,27 @@ DoublyLinkedList ReadFileInputToList()
 	return *maze;
 
 }
+
+void ManhattanDistanceCalculator(DoublyLinkedList* tempList)
+{
+	// for (a,b) and (c,d), manhattan distance is |a-c| + |b-d|
+	DLNode *temp = tempList->head;
+	DLNode *finish = tempList->head;
+
+	while (finish->cell[1][1] != 'F')
+	{
+		finish = finish->next;
+	}
+	
+	while (temp)
+	{
+		temp->manhattanDistanceToFinish = abs((temp->nodeX - finish->nodeX)) + abs((temp->nodeY - finish->nodeY));
+		std::cout << temp->mzCellNum << " : " << temp->manhattanDistanceToFinish << ", ";
+		temp = temp->next;
+	}
+}
+
+// ****************MAIN********************************************************
 
 int main() {
 	using namespace std;
