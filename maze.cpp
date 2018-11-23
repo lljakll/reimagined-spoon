@@ -37,7 +37,7 @@ public:
 		prev = prevPtr;
 		next = nextPtr;
 	}
-
+	
 
 	DLNode *prev;
 	DLNode *next;
@@ -74,6 +74,7 @@ public:
 	DLNode *head, *tail;
 	int numRows, numCols;
 };
+
 
 std::string CreateStringStream(DoublyLinkedList* tempList, int numRows, int numCols);
 void setCursorPosition(int x, int y);
@@ -852,12 +853,17 @@ void ManhattanDistanceCalculator(DoublyLinkedList* tempList)
 		finish = finish->next;
 	}
 	
+	
 	while (temp)
 	{
-		temp->manhattanDistanceToFinish = abs((temp->nodeX - finish->nodeX)) + abs((temp->nodeY - finish->nodeY));
-		std::cout << temp->mzCellNum << " : " << temp->manhattanDistanceToFinish << ", ";
+		if (temp->cell[1][1] != 'X')
+		{
+			temp->manhattanDistanceToFinish = abs((temp->nodeX - finish->nodeX)) + abs((temp->nodeY - finish->nodeY));
+			std::cout << temp->mzCellNum << " : " << temp->manhattanDistanceToFinish << ", ";
+		}
 		temp = temp->next;
 	}
+	
 }
 
 // ****************MAIN********************************************************
