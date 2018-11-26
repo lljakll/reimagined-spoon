@@ -69,6 +69,7 @@ public:
 	void printNodes();
 	void BreadthFirstSolution();
 	void DepthFirstSolution();
+	void HeapSolution();
 	void TestStringStream();
 
 	DLNode *head, *tail;
@@ -82,6 +83,7 @@ std::string BufferedScreenUpdate(std::string currentScreen, std::string newScree
 void StartGame();
 DoublyLinkedList ReadFileInputToList();
 void ManhattanDistanceCalculator(DoublyLinkedList* tempList);
+
 
 //***************DEFINITIONS**********************************************************
 
@@ -582,6 +584,130 @@ void DoublyLinkedList::DepthFirstSolution() {
 
 }
 
+// utilize a heap/priority queue to find a solution
+// Does not work or make sense.  Priority Queue to 
+// solve isn't efficient.  Use Dijsktra Algorithm
+
+void DoublyLinkedList::HeapSolution()
+{
+	std::queue <int> solutionQueue;
+	std::deque <int> queueDisplay;
+	DLNode *temp = head;
+	DLNode *currentNode = head;
+	int gameMode = 1;
+	std::string prevScreen = "";
+	std::string currScreen = "";
+
+	currScreen = CreateStringStream(this, numRows, numCols);
+	prevScreen = BufferedScreenUpdate(currScreen, prevScreen);
+
+
+	// loop until event occurs (0 lose, 2 win)
+	while (gameMode == 1) {
+		// sleep for .2 seconds
+		std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		// set the current node to visited
+		currentNode->visited = 1;
+
+		// check Up for a node
+		if (currentNode->up) {
+			// check for valid move
+			if (currentNode->mzUp->visited == false && currentNode->mzUp->cell[1][1] != 'X') {
+				// push mzUp cell number to queue
+				solutionQueue.push(currentNode->mzUp->mzCellNum);
+				// push this cell number to vector for queue display
+				queueDisplay.push_back(currentNode->mzUp->mzCellNum);
+			}
+		}
+
+		// check Right for a node <see above for comments>
+		if (currentNode->right) {
+			if (currentNode->mzRight->visited == false && currentNode->mzRight->cell[1][1] != 'X') {
+				solutionQueue.push(currentNode->mzRight->mzCellNum);
+				queueDisplay.push_back(currentNode->mzRight->mzCellNum);
+			}
+		}
+
+		// check Down for a node <see above for comments>
+		if (currentNode->down) {
+			if (currentNode->mzDown->visited == false && currentNode->mzDown->cell[1][1] != 'X') {
+				solutionQueue.push(currentNode->mzDown->mzCellNum);
+				queueDisplay.push_back(currentNode->mzDown->mzCellNum);
+			}
+		}
+
+		// check Left for a node <see above for comments>
+		if (currentNode->left) {
+			if (currentNode->mzLeft->visited == false && currentNode->mzLeft->cell[1][1] != 'X') {
+				solutionQueue.push(currentNode->mzLeft->mzCellNum);
+				queueDisplay.push_back(currentNode->mzLeft->mzCellNum);
+			}
+		}
+
+		// Check the queue.  If empty, game over
+		if (solutionQueue.empty()) {
+			gameMode = 0;
+		}
+		// Output the Queue while running.
+		setCursorPosition(0, 2);
+		std::cout << "Heap: ";
+		std::deque <int> ::iterator it;
+		for (it = queueDisplay.begin(); it != queueDisplay.end(); ++it) {
+			std::cout << " < " << *it;
+		}
+		std::cout << "                                                                            ";
+		// redraw the screen after updates to currScreen
+		currScreen = CreateStringStream(this, numRows, numCols);
+		prevScreen = BufferedScreenUpdate(currScreen, prevScreen);
+
+		// if the queue is empty, bypass all of this and end game
+		if (!solutionQueue.empty()) {
+			// set current cell number to next number in queue
+			int curCell = solutionQueue.front();
+
+			// bool to keep from having to iterate the entire list
+			bool jump = true;
+			// loop until find cell num in the list and set it as current node
+			while (jump) {
+				if (temp->mzCellNum == curCell) {
+					currentNode = temp;
+					jump = false;
+				}
+				temp = temp->next;
+			}
+			// reset temp back to head
+			temp = head;
+			// remove that cell from the queue's display
+			queueDisplay.pop_front();
+			// pop the queue
+			solutionQueue.pop();
+
+			// if winner.  set gamemode
+			if (currentNode->cell[1][1] == 'F') {
+				gameMode = 2;
+			}
+		}
+	}
+
+	setCursorPosition(0, 4);
+
+	// if gamemode 0 lose
+	if (gameMode == 0) {
+		std::cout << std::endl << "Game Over.  There is no path through the maze";
+	}
+	// else if gamemode = 2 win
+	else if (gameMode == 2) {
+		std::cout << "Game Over. Path Found! Press Enter";
+		std::cin.ignore();
+		std::cin.get();
+	}
+	else {
+		std::cout << "GAME OVER.  Something Broke!";
+	}
+
+
+}
+
 void DoublyLinkedList::TestStringStream()
 {
 	std::string tempStream;
@@ -755,7 +881,7 @@ void StartGame()
 //		setCursorPosition(0, 4);
 //		std::cout << "                                                                                                                                                        ";
 		setCursorPosition(0, 0);
-		std::cout << "Q)uit | B)readth First Search | D)epth First Search | M)anhattan: ";
+		std::cout << "Q)uit | B)readth First Search | D)epth First Search | H)eap: ";
 		cin >> choice;
 		choice = toupper(choice);
 		switch (choice)
@@ -769,9 +895,9 @@ void StartGame()
 			maze.DepthFirstSolution();
 			system("CLS");
 			break;
-		case 'M':
-			setCursorPosition(0, 42);
-			ManhattanDistanceCalculator(&maze);
+		case 'H':
+			maze.HeapSolution();
+			system("CLS");
 			break;
 
 		}
@@ -865,6 +991,8 @@ void ManhattanDistanceCalculator(DoublyLinkedList* tempList)
 	}
 	
 }
+
+
 
 // ****************MAIN********************************************************
 
