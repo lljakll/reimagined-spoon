@@ -57,33 +57,33 @@ public:
 	int manhattanDistanceToFinish = 0;
 };
 
-class DoublyLinkedList {
+class DStructure {
 public:
-	DoublyLinkedList();
-	DoublyLinkedList(int row, int col);
+	DStructure();
+	DStructure(int row, int col);
 
 	Node *head, *tail;
 	int numRows, numCols;
 };
 
 //Add node to the List
-void AddNode(DoublyLinkedList* maze, char data, int x, int y, int cellNum);
+void AddNode(DStructure* maze, char data, int x, int y, int cellNum);
 //Update node type and coords
-void UpdateNode(DoublyLinkedList* maze, char data, int x, int y);
+void UpdateNode(DStructure* maze, char data, int x, int y);
 // check for valid moves
-void UpdateValidMovementDirections(DoublyLinkedList* maze, int rowSize, int colSize);
+void UpdateValidMovementDirections(DStructure* maze, int rowSize, int colSize);
 // utilize a queue to perform a breadth first search
-void BreadthFirstSolution(DoublyLinkedList* maze);
+void BreadthFirstSolution(DStructure* maze);
 // utilize a stack to perform a depth first search
-void DepthFirstSolution(DoublyLinkedList* maze);
+void DepthFirstSolution(DStructure* maze);
 // Create the string stream for output
-std::string CreateStringStream(DoublyLinkedList* tempList, int numRows, int numCols);
+std::string CreateStringStream(DStructure* tempList, int numRows, int numCols);
 // Update the Screen
 std::string BufferedScreenUpdate(std::string currentScreen, std::string newScreen);
 // Set the cursor postion(helper) only useful in windows.
 void setCursorPosition(int x, int y);
 // Read all of the data from the file
-DoublyLinkedList ReadFileInputToList();
+DStructure ReadFileInputToList();
 // Game Start menu
 void StartGame();
 
@@ -91,19 +91,19 @@ void StartGame();
 
 //***************Fixed Def's*********************************************************
 
-DoublyLinkedList::DoublyLinkedList() {
+DStructure::DStructure() {
 	head = 0;
 	tail = 0;
 }
 
-DoublyLinkedList::DoublyLinkedList(int row, int col) {
+DStructure::DStructure(int row, int col) {
 	head = 0;
 	tail = 0;
 	numRows = row;
 	numCols = col;
 }
 
-void AddNode(DoublyLinkedList* maze, char data, int x, int y, int cellNum) {
+void AddNode(DStructure* maze, char data, int x, int y, int cellNum) {
 	// If there are nodes, point at the end
 	if (maze->tail != 0) {
 		Node *temp = maze->tail;
@@ -129,7 +129,7 @@ void AddNode(DoublyLinkedList* maze, char data, int x, int y, int cellNum) {
 	}
 }
 
-void UpdateNode(DoublyLinkedList* maze, char data, int x, int y) {
+void UpdateNode(DStructure* maze, char data, int x, int y) {
 	Node *temp = maze->head;
 
 	// Iterate through the list
@@ -150,7 +150,7 @@ void UpdateNode(DoublyLinkedList* maze, char data, int x, int y) {
 	}
 }
 
-void UpdateValidMovementDirections(DoublyLinkedList* maze, int rowSize, int colSize) {
+void UpdateValidMovementDirections(DStructure* maze, int rowSize, int colSize) {
 	Node *temp = maze->head;
 	Node *point = temp;
 	int cellNum = 1;
@@ -211,7 +211,7 @@ void UpdateValidMovementDirections(DoublyLinkedList* maze, int rowSize, int colS
 
 }
 
-void BreadthFirstSolution(DoublyLinkedList *maze) {
+void BreadthFirstSolution(DStructure *maze) {
 	std::queue <int> solutionQueue;
 	std::deque <int> queueDisplay;
 	Node *temp = maze->head;
@@ -329,7 +329,7 @@ void BreadthFirstSolution(DoublyLinkedList *maze) {
 
 }
 
-void DepthFirstSolution(DoublyLinkedList* maze) {
+void DepthFirstSolution(DStructure* maze) {
 	std::stack <int> solutionStack;
 	std::vector <int> stackDisplay;
 	Node *temp = maze->head;
@@ -474,7 +474,7 @@ void setCursorPosition(int x, int y)
 	SetConsoleCursorPosition(hOut, coord);
 }
 
-std::string CreateStringStream(DoublyLinkedList* tempList, int numRows, int numCols)
+std::string CreateStringStream(DStructure* tempList, int numRows, int numCols)
 {
 	std::stringstream displayString;
 	
@@ -603,7 +603,7 @@ std::string BufferedScreenUpdate(std::string currentScreen, std::string previous
 	return currentScreen;
 }
 
-DoublyLinkedList ReadFileInputToList()
+DStructure ReadFileInputToList()
 {
 	int rowSize, colSize;
 	int startRow, startCol;
@@ -631,7 +631,7 @@ DoublyLinkedList ReadFileInputToList()
 
 
 	// Create a Doubly Linked List with default content: "."'s
-	DoublyLinkedList* maze = new DoublyLinkedList(rowSize, colSize);
+	DStructure* maze = new DStructure(rowSize, colSize);
 	int cellNum = 1;
 	for (int i = 0; i < rowSize; i++) {
 		for (int j = 0; j < colSize; j++) {
@@ -673,7 +673,7 @@ void StartGame()
 	char choice;
 	do
 	{
-		DoublyLinkedList maze;
+		DStructure maze;
 		maze = ReadFileInputToList();
 		UpdateValidMovementDirections(&maze, maze.numCols, maze.numRows);
 		std::string currScreen = "";
