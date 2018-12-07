@@ -18,14 +18,14 @@
 
 // *************DECLARATIONS*********************************************************
 
-class DLNode {
+class Node {
 public:
-	DLNode() {
+	Node() {
 		prev = NULL;
 		next = NULL;
 	}
 
-	DLNode(char passed, DLNode *prevPtr = 0, DLNode *nextPtr = 0) {
+	Node(char passed, Node *prevPtr = 0, Node *nextPtr = 0) {
 		if (passed != 'X') {
 			cell[1][1] = passed;
 		}
@@ -39,12 +39,12 @@ public:
 	}
 	
 
-	DLNode *prev;
-	DLNode *next;
-	DLNode *mzUp;
-	DLNode *mzDown;
-	DLNode *mzLeft;
-	DLNode *mzRight;
+	Node *prev;
+	Node *next;
+	Node *mzUp;
+	Node *mzDown;
+	Node *mzLeft;
+	Node *mzRight;
 
 	char cell[3][3] = { {' ',' ',' '}, {' ',' ',' '},{' ',' ',' '} };
 	int nodeX, nodeY;
@@ -62,14 +62,14 @@ public:
 	DoublyLinkedList();
 	DoublyLinkedList(int row, int col);
 
-	DLNode *head, *tail;
+	Node *head, *tail;
 	int numRows, numCols;
 };
 
 //Add node to the List
-void AddDLNode(DoublyLinkedList* maze, char data, int x, int y, int cellNum);
+void AddNode(DoublyLinkedList* maze, char data, int x, int y, int cellNum);
 //Update node type and coords
-void UpdateDLNode(DoublyLinkedList* maze, char data, int x, int y);
+void UpdateNode(DoublyLinkedList* maze, char data, int x, int y);
 // check for valid moves
 void UpdateValidMovementDirections(DoublyLinkedList* maze, int rowSize, int colSize);
 // utilize a queue to perform a breadth first search
@@ -103,12 +103,12 @@ DoublyLinkedList::DoublyLinkedList(int row, int col) {
 	numCols = col;
 }
 
-void AddDLNode(DoublyLinkedList* maze, char data, int x, int y, int cellNum) {
+void AddNode(DoublyLinkedList* maze, char data, int x, int y, int cellNum) {
 	// If there are nodes, point at the end
 	if (maze->tail != 0) {
-		DLNode *temp = maze->tail;
+		Node *temp = maze->tail;
 		// Create the new node with passed data. Point at it with tail->next
-		maze->tail->next = new DLNode(data);
+		maze->tail->next = new Node(data);
 		// Point tail at that new node
 		maze->tail = maze->tail->next;
 		// Point that node's prev at the current node
@@ -121,7 +121,7 @@ void AddDLNode(DoublyLinkedList* maze, char data, int x, int y, int cellNum) {
 	}
 	else {
 		// The list is empty, create a new node and point head/tail at it
-		maze->head = maze->tail = new DLNode(data);
+		maze->head = maze->tail = new Node(data);
 		// update x,y of the new node
 		maze->head->nodeX = x;
 		maze->head->nodeY = y;
@@ -129,8 +129,8 @@ void AddDLNode(DoublyLinkedList* maze, char data, int x, int y, int cellNum) {
 	}
 }
 
-void UpdateDLNode(DoublyLinkedList* maze, char data, int x, int y) {
-	DLNode *temp = maze->head;
+void UpdateNode(DoublyLinkedList* maze, char data, int x, int y) {
+	Node *temp = maze->head;
 
 	// Iterate through the list
 	while (temp) {
@@ -151,8 +151,8 @@ void UpdateDLNode(DoublyLinkedList* maze, char data, int x, int y) {
 }
 
 void UpdateValidMovementDirections(DoublyLinkedList* maze, int rowSize, int colSize) {
-	DLNode *temp = maze->head;
-	DLNode *point = temp;
+	Node *temp = maze->head;
+	Node *point = temp;
 	int cellNum = 1;
 
 	// Iterate through the list
@@ -214,8 +214,8 @@ void UpdateValidMovementDirections(DoublyLinkedList* maze, int rowSize, int colS
 void BreadthFirstSolution(DoublyLinkedList *maze) {
 	std::queue <int> solutionQueue;
 	std::deque <int> queueDisplay;
-	DLNode *temp = maze->head;
-	DLNode *currentNode = maze->head;
+	Node *temp = maze->head;
+	Node *currentNode = maze->head;
 	int gameMode = 1;
 	std::string prevScreen = "";
 	std::string currScreen = "";
@@ -332,8 +332,8 @@ void BreadthFirstSolution(DoublyLinkedList *maze) {
 void DepthFirstSolution(DoublyLinkedList* maze) {
 	std::stack <int> solutionStack;
 	std::vector <int> stackDisplay;
-	DLNode *temp = maze->head;
-	DLNode *currentNode = maze->head;
+	Node *temp = maze->head;
+	Node *currentNode = maze->head;
 	int gameMode = 1;
 	int deadEnd = 0;
 	std::string prevScreen = "";
@@ -486,9 +486,9 @@ std::string CreateStringStream(DoublyLinkedList* tempList, int numRows, int numC
 	}
 
 	// Create pointers for row and temp
-	DLNode *rowPtr = tempList->head;
+	Node *rowPtr = tempList->head;
 	int rowNodeCount, colNodeCount;
-	DLNode *temp = tempList->head;
+	Node *temp = tempList->head;
 
 	// Which node on the row are we at.  Used for condition check
 	rowNodeCount = 0;
@@ -635,15 +635,15 @@ DoublyLinkedList ReadFileInputToList()
 	int cellNum = 1;
 	for (int i = 0; i < rowSize; i++) {
 		for (int j = 0; j < colSize; j++) {
-			AddDLNode(maze,' ', i, j, cellNum);
+			AddNode(maze,' ', i, j, cellNum);
 			cellNum++;
 		}
 	}
 
 	// update the start and finish coordinages in the list
 	// passes the node coordinates(on a grid) to the function to find the node
-	UpdateDLNode(maze, 'S', startRow, startCol);
-	UpdateDLNode(maze, 'F', finishRow, finishCol);
+	UpdateNode(maze, 'S', startRow, startCol);
+	UpdateNode(maze, 'F', finishRow, finishCol);
 
 
 
@@ -659,7 +659,7 @@ DoublyLinkedList ReadFileInputToList()
 				<< std::endl;
 			return {};
 		}
-		UpdateDLNode(maze, 'X', wallRow, wallCol);
+		UpdateNode(maze, 'X', wallRow, wallCol);
 	}
 	myFile.close();
 
