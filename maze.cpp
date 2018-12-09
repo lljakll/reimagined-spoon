@@ -18,6 +18,9 @@
 
 // *************DECLARATIONS*********************************************************
 
+
+
+
 class Node {
 public:
 	Node() {
@@ -38,15 +41,18 @@ public:
 		next = nextPtr;
 	}
 	
-
+	// node pointers
 	Node *prev;
 	Node *next;
+
+	// Edge pointers
 	Node *mzUp;
 	Node *mzDown;
 	Node *mzLeft;
 	Node *mzRight;
 
 	char cell[3][3] = { {' ',' ',' '}, {' ',' ',' '},{' ',' ',' '} };
+	// vertex coords
 	int nodeX, nodeY;
 	bool visited, backTrack;
 	bool up = true;
@@ -64,9 +70,10 @@ public:
 
 	Node *head, *tail;
 	int numRows, numCols;
+	
 };
 
-//Add node to the List
+//Add node to the DataStructure
 void AddNode(DStructure* maze, char data, int x, int y, int cellNum);
 //Update node type and coords
 void UpdateNode(DStructure* maze, char data, int x, int y);
@@ -86,6 +93,7 @@ void setCursorPosition(int x, int y);
 DStructure ReadFileInputToList();
 // Game Start menu
 void StartGame();
+
 
 
 
@@ -666,6 +674,8 @@ DStructure ReadFileInputToList()
 	return *maze;
 
 }
+
+
 
 void StartGame()
 {
