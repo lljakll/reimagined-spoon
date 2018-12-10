@@ -692,7 +692,7 @@ void StartGame()
 		BufferedScreenUpdate(currScreen, "");
 
 		setCursorPosition(0, 0);
-		std::cout << "Q)uit | D)epth First Search:  ";
+		std::cout << "Q)uit | B)readth First Search:  ";
 		cin >> choice;
 		choice = toupper(choice);
 		switch (choice)
