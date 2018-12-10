@@ -21,14 +21,14 @@
 
 
 
-class Node {
+class Vertex {
 public:
-	Node() {
+	Vertex() {
 		prev = NULL;
 		next = NULL;
 	}
 
-	Node(char passed, Node *prevPtr = 0, Node *nextPtr = 0) {
+	Vertex(char passed, Vertex *prevPtr = 0, Vertex *nextPtr = 0) {
 		if (passed != 'X') {
 			cell[1][1] = passed;
 		}
@@ -42,14 +42,14 @@ public:
 	}
 	
 	// node pointers
-	Node *prev;
-	Node *next;
+	Vertex *prev;
+	Vertex *next;
 
 	// Edge pointers
-	Node *mzUp;
-	Node *mzDown;
-	Node *mzLeft;
-	Node *mzRight;
+	Vertex *mzUp;
+	Vertex *mzDown;
+	Vertex *mzLeft;
+	Vertex *mzRight;
 
 	char cell[3][3] = { {' ',' ',' '}, {' ',' ',' '},{' ',' ',' '} };
 	// vertex coords
@@ -68,15 +68,15 @@ public:
 	DStructure();
 	DStructure(int row, int col);
 
-	Node *head, *tail;
+	Vertex *head, *tail;
 	int numRows, numCols;
 	
 };
 
 //Add node to the DataStructure
-void AddNode(DStructure* maze, char data, int x, int y, int cellNum);
+void AddVertex(DStructure* maze, char data, int x, int y, int cellNum);
 //Update node type and coords
-void UpdateNode(DStructure* maze, char data, int x, int y);
+void UpdateVertex(DStructure* maze, char data, int x, int y);
 // check for valid moves
 void UpdateValidMovementDirections(DStructure* maze, int rowSize, int colSize);
 // utilize a queue to perform a breadth first search
@@ -90,7 +90,7 @@ std::string BufferedScreenUpdate(std::string currentScreen, std::string newScree
 // Set the cursor postion(helper) only useful in windows.
 void setCursorPosition(int x, int y);
 // Read all of the data from the file
-DStructure ReadFileInputToList();
+DStructure ReadFileInputToGraph();
 // Game Start menu
 void StartGame();
 
@@ -111,12 +111,12 @@ DStructure::DStructure(int row, int col) {
 	numCols = col;
 }
 
-void AddNode(DStructure* maze, char data, int x, int y, int cellNum) {
+void AddVertex(DStructure* maze, char data, int x, int y, int cellNum) {
 	// If there are nodes, point at the end
 	if (maze->tail != 0) {
-		Node *temp = maze->tail;
+		Vertex *temp = maze->tail;
 		// Create the new node with passed data. Point at it with tail->next
-		maze->tail->next = new Node(data);
+		maze->tail->next = new Vertex(data);
 		// Point tail at that new node
 		maze->tail = maze->tail->next;
 		// Point that node's prev at the current node
@@ -129,7 +129,7 @@ void AddNode(DStructure* maze, char data, int x, int y, int cellNum) {
 	}
 	else {
 		// The list is empty, create a new node and point head/tail at it
-		maze->head = maze->tail = new Node(data);
+		maze->head = maze->tail = new Vertex(data);
 		// update x,y of the new node
 		maze->head->nodeX = x;
 		maze->head->nodeY = y;
@@ -137,8 +137,8 @@ void AddNode(DStructure* maze, char data, int x, int y, int cellNum) {
 	}
 }
 
-void UpdateNode(DStructure* maze, char data, int x, int y) {
-	Node *temp = maze->head;
+void UpdateVertex(DStructure* maze, char data, int x, int y) {
+	Vertex *temp = maze->head;
 
 	// Iterate through the list
 	while (temp) {
@@ -159,8 +159,8 @@ void UpdateNode(DStructure* maze, char data, int x, int y) {
 }
 
 void UpdateValidMovementDirections(DStructure* maze, int rowSize, int colSize) {
-	Node *temp = maze->head;
-	Node *point = temp;
+	Vertex *temp = maze->head;
+	Vertex *point = temp;
 	int cellNum = 1;
 
 	// Iterate through the list
@@ -222,8 +222,8 @@ void UpdateValidMovementDirections(DStructure* maze, int rowSize, int colSize) {
 void BreadthFirstSolution(DStructure *maze) {
 	std::queue <int> solutionQueue;
 	std::deque <int> queueDisplay;
-	Node *temp = maze->head;
-	Node *currentNode = maze->head;
+	Vertex *temp = maze->head;
+	Vertex *currentVertex = maze->head;
 	int gameMode = 1;
 	std::string prevScreen = "";
 	std::string currScreen = "";
@@ -237,40 +237,40 @@ void BreadthFirstSolution(DStructure *maze) {
 		// sleep for .2 seconds
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		// set the current node to visited
-		currentNode->visited = 1;
+		currentVertex->visited = 1;
 
 		// check Up for a node
-		if (currentNode->up) {
+		if (currentVertex->up) {
 			// check for valid move
-			if (currentNode->mzUp->visited == false && currentNode->mzUp->cell[1][1] != 'X') {
+			if (currentVertex->mzUp->visited == false && currentVertex->mzUp->cell[1][1] != 'X') {
 				// push mzUp cell number to queue
-				solutionQueue.push(currentNode->mzUp->mzCellNum);
+				solutionQueue.push(currentVertex->mzUp->mzCellNum);
 				// push this cell number to vector for queue display
-				queueDisplay.push_back(currentNode->mzUp->mzCellNum);
+				queueDisplay.push_back(currentVertex->mzUp->mzCellNum);
 			}
 		}
 
 		// check Right for a node <see above for comments>
-		if (currentNode->right) {
-			if (currentNode->mzRight->visited == false && currentNode->mzRight->cell[1][1] != 'X') {
-				solutionQueue.push(currentNode->mzRight->mzCellNum);
-				queueDisplay.push_back(currentNode->mzRight->mzCellNum);
+		if (currentVertex->right) {
+			if (currentVertex->mzRight->visited == false && currentVertex->mzRight->cell[1][1] != 'X') {
+				solutionQueue.push(currentVertex->mzRight->mzCellNum);
+				queueDisplay.push_back(currentVertex->mzRight->mzCellNum);
 			}
 		}
 
 		// check Down for a node <see above for comments>
-		if (currentNode->down) {
-			if (currentNode->mzDown->visited == false && currentNode->mzDown->cell[1][1] != 'X') {
-				solutionQueue.push(currentNode->mzDown->mzCellNum);
-				queueDisplay.push_back(currentNode->mzDown->mzCellNum);
+		if (currentVertex->down) {
+			if (currentVertex->mzDown->visited == false && currentVertex->mzDown->cell[1][1] != 'X') {
+				solutionQueue.push(currentVertex->mzDown->mzCellNum);
+				queueDisplay.push_back(currentVertex->mzDown->mzCellNum);
 			}
 		}
 
 		// check Left for a node <see above for comments>
-		if (currentNode->left) {
-			if (currentNode->mzLeft->visited == false && currentNode->mzLeft->cell[1][1] != 'X') {
-				solutionQueue.push(currentNode->mzLeft->mzCellNum);
-				queueDisplay.push_back(currentNode->mzLeft->mzCellNum);
+		if (currentVertex->left) {
+			if (currentVertex->mzLeft->visited == false && currentVertex->mzLeft->cell[1][1] != 'X') {
+				solutionQueue.push(currentVertex->mzLeft->mzCellNum);
+				queueDisplay.push_back(currentVertex->mzLeft->mzCellNum);
 			}
 		}
 
@@ -300,7 +300,7 @@ void BreadthFirstSolution(DStructure *maze) {
 			// loop until find cell num in the list and set it as current node
 			while (jump) {
 				if (temp->mzCellNum == curCell) {
-					currentNode = temp;
+					currentVertex = temp;
 					jump = false;
 				}
 				temp = temp->next;
@@ -313,7 +313,7 @@ void BreadthFirstSolution(DStructure *maze) {
 			solutionQueue.pop();
 
 			// if winner.  set gamemode
-			if (currentNode->cell[1][1] == 'F') {
+			if (currentVertex->cell[1][1] == 'F') {
 				gameMode = 2;
 			}
 		}
@@ -340,8 +340,8 @@ void BreadthFirstSolution(DStructure *maze) {
 void DepthFirstSolution(DStructure* maze) {
 	std::stack <int> solutionStack;
 	std::vector <int> stackDisplay;
-	Node *temp = maze->head;
-	Node *currentNode = maze->head;
+	Vertex *temp = maze->head;
+	Vertex *currentVertex = maze->head;
 	int gameMode = 1;
 	int deadEnd = 0;
 	std::string prevScreen = "";
@@ -357,67 +357,67 @@ void DepthFirstSolution(DStructure* maze) {
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
 		// set the current node to visited
-		currentNode->visited = 1;
+		currentVertex->visited = 1;
 
 		// check Up for a node
-		if (currentNode->up) {
+		if (currentVertex->up) {
 			// check for valid move
-			if (currentNode->mzUp->visited == false && currentNode->mzUp->cell[1][1] != 'X') {
+			if (currentVertex->mzUp->visited == false && currentVertex->mzUp->cell[1][1] != 'X') {
 				// push this cell number to stack
-				solutionStack.push(currentNode->mzCellNum);
+				solutionStack.push(currentVertex->mzCellNum);
 				// push this cell number to vector for stack display
-				stackDisplay.push_back(currentNode->mzCellNum);
+				stackDisplay.push_back(currentVertex->mzCellNum);
 				// move to valid cell
-				currentNode = currentNode->mzUp;
+				currentVertex = currentVertex->mzUp;
 				// check for finish line
-				if (currentNode->cell[1][1] == 'F') { gameMode = 2; }
+				if (currentVertex->cell[1][1] == 'F') { gameMode = 2; }
 			}
 			// set current cells up flag to false if up is not a good move
-			else { currentNode->up = false; }
+			else { currentVertex->up = false; }
 		}
 
 		// check Right for a node <see above for comments>
-		else if (currentNode->right) {
-			if (currentNode->mzRight->visited == false && currentNode->mzRight->cell[1][1] != 'X') {
-				solutionStack.push(currentNode->mzCellNum);
-				stackDisplay.push_back(currentNode->mzCellNum);
-				currentNode = currentNode->mzRight;
-				if (currentNode->cell[1][1] == 'F') { gameMode = 2; }
+		else if (currentVertex->right) {
+			if (currentVertex->mzRight->visited == false && currentVertex->mzRight->cell[1][1] != 'X') {
+				solutionStack.push(currentVertex->mzCellNum);
+				stackDisplay.push_back(currentVertex->mzCellNum);
+				currentVertex = currentVertex->mzRight;
+				if (currentVertex->cell[1][1] == 'F') { gameMode = 2; }
 			}
-			else { currentNode->right = false; }
+			else { currentVertex->right = false; }
 		}
 
 		// check Down for a node <see above for comments>
-		else if (currentNode->down) {
-			if (currentNode->mzDown->visited == false && currentNode->mzDown->cell[1][1] != 'X') {
-				solutionStack.push(currentNode->mzCellNum);
-				stackDisplay.push_back(currentNode->mzCellNum);
-				currentNode = currentNode->mzDown;
-				if (currentNode->cell[1][1] == 'F') { gameMode = 2; }
+		else if (currentVertex->down) {
+			if (currentVertex->mzDown->visited == false && currentVertex->mzDown->cell[1][1] != 'X') {
+				solutionStack.push(currentVertex->mzCellNum);
+				stackDisplay.push_back(currentVertex->mzCellNum);
+				currentVertex = currentVertex->mzDown;
+				if (currentVertex->cell[1][1] == 'F') { gameMode = 2; }
 			}
-			else { currentNode->down = false; }
+			else { currentVertex->down = false; }
 		}
 
 		// check Left for a node <see above for comments>
-		else if (currentNode->left) {
-			if (currentNode->mzLeft->visited == false && currentNode->mzLeft->cell[1][1] != 'X') {
-				solutionStack.push(currentNode->mzCellNum);
-				stackDisplay.push_back(currentNode->mzCellNum);
-				currentNode = currentNode->mzLeft;
-				if (currentNode->cell[1][1] == 'F') { gameMode = 2; }
+		else if (currentVertex->left) {
+			if (currentVertex->mzLeft->visited == false && currentVertex->mzLeft->cell[1][1] != 'X') {
+				solutionStack.push(currentVertex->mzCellNum);
+				stackDisplay.push_back(currentVertex->mzCellNum);
+				currentVertex = currentVertex->mzLeft;
+				if (currentVertex->cell[1][1] == 'F') { gameMode = 2; }
 			}
-			else { currentNode->left = false; }
+			else { currentVertex->left = false; }
 		}
 
 		// if no valid node or move
-		if (!currentNode->up && !currentNode->right && !currentNode->down && !currentNode->left) {
+		if (!currentVertex->up && !currentVertex->right && !currentVertex->down && !currentVertex->left) {
 			// if the stack is empty, there is no solution end game
 			if (solutionStack.empty()) {
 				gameMode = 0;
 			}
 			else {
 				// set current node backTrack flag
-				currentNode->backTrack = true;
+				currentVertex->backTrack = true;
 				// get previous cell nubmer from stack
 				int curCell = solutionStack.top();
 				// bool to keep from having to iterate the entire list
@@ -426,7 +426,7 @@ void DepthFirstSolution(DStructure* maze) {
 				// pretty much, just go to the top node of the list in the stack
 				while (jump) {
 					if (temp->mzCellNum == curCell) {
-						currentNode = temp;
+						currentVertex = temp;
 						jump = false;
 					}
 					temp = temp->next;
@@ -438,7 +438,7 @@ void DepthFirstSolution(DStructure* maze) {
 				// remove that cell from the stack display
 				stackDisplay.pop_back();
 				// set the current node backtrack since we've moved back a cell.
-				currentNode->backTrack = true;
+				currentVertex->backTrack = true;
 			}
 		}
 
@@ -494,24 +494,24 @@ std::string CreateStringStream(DStructure* tempList, int numRows, int numCols)
 	}
 
 	// Create pointers for row and temp
-	Node *rowPtr = tempList->head;
-	int rowNodeCount, colNodeCount;
-	Node *temp = tempList->head;
+	Vertex *rowPtr = tempList->head;
+	int rowVertexCount, colVertexCount;
+	Vertex *temp = tempList->head;
 
 	// Which node on the row are we at.  Used for condition check
-	rowNodeCount = 0;
-	while (rowNodeCount < numRows && temp != NULL) {
+	rowVertexCount = 0;
+	while (rowVertexCount < numRows && temp != NULL) {
 		// iterate the row of the nodes array
 		for (int i = 0; i < 3; i++) {
 			displayString << std::endl;
 			
 			// Move temp to the 1st node of the current row
 			temp = rowPtr;
-			colNodeCount = 0;
+			colVertexCount = 0;
 			// Add Left wall
 			displayString << "| ";
 			// print the cells
-			while (colNodeCount < numCols) {
+			while (colVertexCount < numCols) {
 				for (int j = 0; j < 3; j++) {
 					if (!temp->visited && !temp->backTrack) {
 						displayString << temp->cell[i][j] << " ";
@@ -547,7 +547,7 @@ std::string CreateStringStream(DStructure* tempList, int numRows, int numCols)
 					}
 
 				}
-				colNodeCount++;
+				colVertexCount++;
 				// Move temp forward if it is not tail/NULL otherwise
 				if (temp != tempList->tail)
 					temp = temp->next;
@@ -557,11 +557,11 @@ std::string CreateStringStream(DStructure* tempList, int numRows, int numCols)
 			// Add Right wall
 			displayString << "|";
 		}
-		colNodeCount = 0;
+		colVertexCount = 0;
 		// Move the rowPtr to the first node after numCols
 		// This simulates the next row of the Maze.
 		rowPtr = temp;
-		rowNodeCount++;
+		rowVertexCount++;
 	}
 	// Add bottom Wall
 	
@@ -611,7 +611,7 @@ std::string BufferedScreenUpdate(std::string currentScreen, std::string previous
 	return currentScreen;
 }
 
-DStructure ReadFileInputToList()
+DStructure ReadFileInputToGraph()
 {
 	int rowSize, colSize;
 	int startRow, startCol;
@@ -643,15 +643,15 @@ DStructure ReadFileInputToList()
 	int cellNum = 1;
 	for (int i = 0; i < rowSize; i++) {
 		for (int j = 0; j < colSize; j++) {
-			AddNode(maze,' ', i, j, cellNum);
+			AddVertex(maze,' ', i, j, cellNum);
 			cellNum++;
 		}
 	}
 
 	// update the start and finish coordinages in the list
 	// passes the node coordinates(on a grid) to the function to find the node
-	UpdateNode(maze, 'S', startRow, startCol);
-	UpdateNode(maze, 'F', finishRow, finishCol);
+	UpdateVertex(maze, 'S', startRow, startCol);
+	UpdateVertex(maze, 'F', finishRow, finishCol);
 
 
 
@@ -667,7 +667,7 @@ DStructure ReadFileInputToList()
 				<< std::endl;
 			return {};
 		}
-		UpdateNode(maze, 'X', wallRow, wallCol);
+		UpdateVertex(maze, 'X', wallRow, wallCol);
 	}
 	myFile.close();
 
@@ -684,7 +684,7 @@ void StartGame()
 	do
 	{
 		DStructure maze;
-		maze = ReadFileInputToList();
+		maze = ReadFileInputToGraph();
 		UpdateValidMovementDirections(&maze, maze.numCols, maze.numRows);
 		std::string currScreen = "";
 		currScreen = CreateStringStream(&maze, maze.numRows, maze.numCols);
@@ -692,7 +692,7 @@ void StartGame()
 		BufferedScreenUpdate(currScreen, "");
 
 		setCursorPosition(0, 0);
-		std::cout << "Q)uit | B)readth First Search | D)epth First Search:  ";
+		std::cout << "Q)uit | D)epth First Search:  ";
 		cin >> choice;
 		choice = toupper(choice);
 		switch (choice)
